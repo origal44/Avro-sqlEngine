@@ -1,4 +1,4 @@
-package com.avrosql.lexer;
+package com.avrosql.lexer.token;
 
 import org.junit.jupiter.api.Test;
 

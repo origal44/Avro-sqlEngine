@@ -80,6 +80,18 @@ class CursorTest {
     }
 
     @Test
+    void peekNextLooksOneAheadWithoutConsuming() {
+        Cursor cursor = new Cursor("ab");
+
+        assertEquals('b', cursor.peekNext());
+        assertEquals('a', cursor.peek());
+        cursor.advance();
+        assertEquals(Cursor.END, cursor.peekNext());
+        cursor.advance();
+        assertEquals(Cursor.END, cursor.peekNext());
+    }
+
+    @Test
     void advancePastEndIsAnError() {
         Cursor cursor = new Cursor("a");
         cursor.advance();

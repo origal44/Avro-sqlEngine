@@ -1,4 +1,10 @@
-package com.avrosql.lexer;
+package com.avrosql.lexer.reader;
+
+import com.avrosql.lexer.Cursor;
+import com.avrosql.lexer.Lexer;
+import com.avrosql.lexer.LexicalException;
+import com.avrosql.lexer.token.Token;
+import com.avrosql.lexer.token.TokenType;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -6,14 +12,14 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
-import static com.avrosql.lexer.TokenType.*;
+import static com.avrosql.lexer.token.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OperatorReaderTest {
 
     private final OperatorReader reader = new OperatorReader();
 
-    private static List<Token> lex(String source) {
+    private static List<Token> lex(String source) throws LexicalException {
         return new Lexer(source).tokenize();
     }
 
@@ -63,24 +69,24 @@ class OperatorReaderTest {
     // --- Through the Lexer ---
 
     @Test
-    void lessThenMinusAreTwoTokens() {
+    void lessThenMinusAreTwoTokens() throws LexicalException {
         assertEquals(List.of(token(LESS, "<", 1), token(MINUS, "-", 2), token(EOF, "", 3)), lex("<-"));
     }
 
     @Test
-    void spaceSplitsTwoCharacterOperator() {
+    void spaceSplitsTwoCharacterOperator() throws LexicalException {
         // The Lexer does not guess: '< =' is LESS then EQUAL, and the Parser reports the error.
         assertEquals(List.of(token(LESS, "<", 1), token(EQUAL, "=", 3), token(EOF, "", 4)), lex("< ="));
     }
 
     @Test
-    void longestMatchThenContinue() {
+    void longestMatchThenContinue() throws LexicalException {
         // '<>=' is NOT_EQUAL then EQUAL, never LESS then GREATER_EQUAL.
         assertEquals(List.of(token(NOT_EQUAL, "<>", 1), token(EQUAL, "=", 3), token(EOF, "", 4)), lex("<>="));
     }
 
     @Test
-    void doubleSpacesInTheMiddleAreSkipped() {
+    void doubleSpacesInTheMiddleAreSkipped() throws LexicalException {
         // Required by Step 2: doubled whitespace between tokens is skipped and positions stay correct.
         assertEquals(List.of(
                 token(LEFT_PAREN, "(", 1),
@@ -90,7 +96,7 @@ class OperatorReaderTest {
     }
 
     @Test
-    void semicolonIsAnOrdinaryTokenNotAStop() {
+    void semicolonIsAnOrdinaryTokenNotAStop() throws LexicalException {
         assertEquals(List.of(
                 token(SEMICOLON, ";", 1),
                 token(PLUS, "+", 2),

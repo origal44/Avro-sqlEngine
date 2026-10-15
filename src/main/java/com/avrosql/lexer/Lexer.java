@@ -1,5 +1,13 @@
 package com.avrosql.lexer;
 
+import com.avrosql.lexer.reader.IdentifierReader;
+import com.avrosql.lexer.reader.NumberReader;
+import com.avrosql.lexer.reader.OperatorReader;
+import com.avrosql.lexer.reader.StringReader;
+import com.avrosql.lexer.reader.TokenReader;
+import com.avrosql.lexer.token.Token;
+import com.avrosql.lexer.token.TokenType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +16,9 @@ import java.util.List;
  * The Lexer only drives the loop; each kind of token is read by its own {@link TokenReader}.
  */
 public final class Lexer {
+
+    /** EOF has no characters in the source. */
+    private static final String EOF_TEXT = "";
 
     private final Cursor cursor;
     private final List<TokenReader> readers;
@@ -30,25 +41,35 @@ public final class Lexer {
                 new IdentifierReader());
     }
 
-    public List<Token> tokenize() {
+    /**
+     * Splits the whole input into tokens, ending with EOF.
+     *
+     * @throws LexicalException if a character cannot be part of any token
+     */
+    public List<Token> tokenize() throws LexicalException {
         List<Token> tokens = new ArrayList<>();
-        // The only stop condition is reaching the end of the input.
-        while (!cursor.isAtEnd()) {
-            char c = cursor.peek();
-            if (Chars.isWhitespace(c)) {
-                cursor.advance(); // must consume, or the loop never ends
-            } else {
-                tokens.add(scanToken(c));
+        try {
+            // The only stop condition is reaching the end of the input.
+            while (!cursor.isAtEnd()) {
+                char c = cursor.peek();
+                if (Chars.isWhitespace(c)) {
+                    cursor.advance(); // must consume, or the loop never ends
+                } else {
+                    tokens.add(scanToken(c));
+                }
             }
+        } catch (LexicalRuntimeException e) {
+            // Readers throw the unchecked form; callers of the Lexer get the checked one.
+            throw e.getCause();
         }
-        tokens.add(new Token(TokenType.EOF, "", cursor.line(), cursor.column()));
+        tokens.add(new Token(TokenType.EOF, EOF_TEXT, cursor.line(), cursor.column()));
         return List.copyOf(tokens);
     }
 
     /** Hands the token to the first reader that can start with this character. */
-    private Token scanToken(char c) {
+    private Token scanToken(char c) throws LexicalException {
         for (TokenReader reader : readers) {
-            if (reader.canStart(c)) {
+            if (reader.isToken(c)) {
                 return reader.read(cursor);
             }
         }

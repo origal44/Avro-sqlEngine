@@ -1,4 +1,10 @@
-package com.avrosql.lexer;
+package com.avrosql.lexer.reader;
+
+import com.avrosql.lexer.Cursor;
+import com.avrosql.lexer.Lexer;
+import com.avrosql.lexer.LexicalException;
+import com.avrosql.lexer.token.Token;
+import com.avrosql.lexer.token.TokenType;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -6,14 +12,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
-import static com.avrosql.lexer.TokenType.*;
+import static com.avrosql.lexer.token.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NumberReaderTest {
 
     private final NumberReader reader = new NumberReader();
 
-    private static List<Token> lex(String source) {
+    private static List<Token> lex(String source) throws LexicalException {
         return new Lexer(source).tokenize();
     }
 
@@ -53,7 +59,7 @@ class NumberReaderTest {
     // --- Through the Lexer ---
 
     @Test
-    void numberOperatorNumber() {
+    void numberOperatorNumber() throws LexicalException {
         assertEquals(List.of(
                 token(NUMBER, "42", 1),
                 token(PLUS, "+", 3),
@@ -62,7 +68,7 @@ class NumberReaderTest {
     }
 
     @Test
-    void negativeNumberIsMinusThenNumber() {
+    void negativeNumberIsMinusThenNumber() throws LexicalException {
         assertEquals(List.of(
                 token(MINUS, "-", 1),
                 token(NUMBER, "5.5", 2),
@@ -70,7 +76,7 @@ class NumberReaderTest {
     }
 
     @Test
-    void numbersInsideParenthesesAndAfterSpaces() {
+    void numbersInsideParenthesesAndAfterSpaces() throws LexicalException {
         assertEquals(List.of(
                 token(LEFT_PAREN, "(", 1),
                 token(NUMBER, "10", 2),

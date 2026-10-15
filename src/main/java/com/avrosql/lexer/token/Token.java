@@ -1,4 +1,6 @@
-package com.avrosql.lexer;
+package com.avrosql.lexer.token;
+
+import com.avrosql.lexer.Lexer;
 
 import java.util.Objects;
 

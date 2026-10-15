@@ -1,4 +1,10 @@
-package com.avrosql.lexer;
+package com.avrosql.lexer.reader;
+
+import com.avrosql.lexer.Cursor;
+import com.avrosql.lexer.Lexer;
+import com.avrosql.lexer.LexicalException;
+import com.avrosql.lexer.token.Token;
+import com.avrosql.lexer.token.TokenType;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,14 +14,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.List;
 import java.util.Locale;
 
-import static com.avrosql.lexer.TokenType.*;
+import static com.avrosql.lexer.token.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class IdentifierReaderTest {
 
     private final IdentifierReader reader = new IdentifierReader();
 
-    private static List<Token> lex(String source) {
+    private static List<Token> lex(String source) throws LexicalException {
         return new Lexer(source).tokenize();
     }
 
@@ -92,7 +98,7 @@ class IdentifierReaderTest {
     // --- Through the Lexer ---
 
     @Test
-    void orderByIsTwoKeywords() {
+    void orderByIsTwoKeywords() throws LexicalException {
         assertEquals(List.of(
                 token(ORDER, "ORDER", 1),
                 token(BY, "BY", 7),
@@ -102,7 +108,7 @@ class IdentifierReaderTest {
     }
 
     @Test
-    void functionCallIsIdentifierThenParenthesis() {
+    void functionCallIsIdentifierThenParenthesis() throws LexicalException {
         assertEquals(List.of(
                 token(IDENTIFIER, "COUNT", 1),
                 token(LEFT_PAREN, "(", 6),
@@ -112,7 +118,7 @@ class IdentifierReaderTest {
     }
 
     @Test
-    void numberFollowedByLettersIsTwoTokens() {
+    void numberFollowedByLettersIsTwoTokens() throws LexicalException {
         // From Step 5: 42abc is NUMBER then IDENTIFIER, and the Parser rejects it.
         assertEquals(List.of(
                 token(NUMBER, "42", 1),

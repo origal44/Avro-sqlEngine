@@ -1,22 +1,25 @@
 package com.avrosql.lexer;
 
+import com.avrosql.lexer.token.Token;
+import com.avrosql.lexer.token.TokenType;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
-import static com.avrosql.lexer.TokenType.*;
+import static com.avrosql.lexer.token.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /** All readers working together on whole queries. */
 class LexerIntegrationTest {
 
-    private static List<Token> lex(String source) {
+    private static List<Token> lex(String source) throws LexicalException {
         return new Lexer(source).tokenize();
     }
 
-    private static List<TokenType> types(String source) {
+    private static List<TokenType> types(String source) throws LexicalException {
         return lex(source).stream().map(Token::type).toList();
     }
 
@@ -25,7 +28,7 @@ class LexerIntegrationTest {
     }
 
     @Test
-    void fullMultiLineQuery() {
+    void fullMultiLineQuery() throws LexicalException {
         String sql = """
                 SELECT DISTINCT name, COUNT(*) AS total
                 FROM users
@@ -95,7 +98,7 @@ class LexerIntegrationTest {
     // --- ';' is an ordinary token, not a stop condition ---
 
     @Test
-    void queryWithoutSemicolon() {
+    void queryWithoutSemicolon() throws LexicalException {
         assertEquals(List.of(
                 t(SELECT, "SELECT", 1, 1),
                 t(STAR, "*", 1, 8),
@@ -105,7 +108,7 @@ class LexerIntegrationTest {
     }
 
     @Test
-    void queryWithSemicolon() {
+    void queryWithSemicolon() throws LexicalException {
         assertEquals(List.of(
                 t(SELECT, "SELECT", 1, 1),
                 t(STAR, "*", 1, 8),
@@ -116,14 +119,14 @@ class LexerIntegrationTest {
     }
 
     @Test
-    void textAfterSemicolonIsLexedNormally() {
+    void textAfterSemicolonIsLexedNormally() throws LexicalException {
         // A truncated second query: the Lexer returns it, the Parser will reject it.
         assertEquals(List.of(SELECT, STAR, FROM, IDENTIFIER, SEMICOLON, SELECT, EOF),
                 types("SELECT * FROM t; SELECT"));
     }
 
     @Test
-    void unknownWordAfterSemicolonIsJustAnIdentifier() {
+    void unknownWordAfterSemicolonIsJustAnIdentifier() throws LexicalException {
         assertEquals(List.of(SELECT, STAR, FROM, IDENTIFIER, SEMICOLON, IDENTIFIER, IDENTIFIER, EOF),
                 types("SELECT * FROM t; DROP users"));
     }
@@ -131,39 +134,39 @@ class LexerIntegrationTest {
     // --- No syntax knowledge in the Lexer ---
 
     @Test
-    void betweenAndIsAnOrdinaryAnd() {
+    void betweenAndIsAnOrdinaryAnd() throws LexicalException {
         assertEquals(List.of(WHERE, IDENTIFIER, NOT, BETWEEN, NUMBER, AND, NUMBER, EOF),
                 types("WHERE age NOT BETWEEN 1 AND 5"));
     }
 
     @Test
-    void notInIsTwoTokens() {
+    void notInIsTwoTokens() throws LexicalException {
         assertEquals(List.of(WHERE, IDENTIFIER, NOT, IN,
                         LEFT_PAREN, STRING, COMMA, STRING, RIGHT_PAREN, EOF),
                 types("WHERE city NOT IN ('Haifa', 'Eilat')"));
     }
 
     @Test
-    void likePatternIsAString() {
+    void likePatternIsAString() throws LexicalException {
         assertEquals(List.of(WHERE, IDENTIFIER, LIKE, STRING, EOF),
                 types("WHERE name LIKE 'A%'"));
     }
 
     @Test
-    void arithmeticWithNegativeDecimal() {
+    void arithmeticWithNegativeDecimal() throws LexicalException {
         assertEquals(List.of(SELECT, IDENTIFIER, STAR, MINUS, NUMBER, PERCENT, NUMBER, EOF),
                 types("SELECT price*-1.5%3"));
     }
 
     @Test
-    void wrongWordOrderIsNotTheLexersProblem() {
+    void wrongWordOrderIsNotTheLexersProblem() throws LexicalException {
         assertEquals(List.of(FROM, SELECT, WHERE, EOF), types("FROM SELECT WHERE"));
     }
 
     // --- Whitespace and positions ---
 
     @Test
-    void windowsLineEndingsAndTabs() {
+    void windowsLineEndingsAndTabs() throws LexicalException {
         assertEquals(List.of(
                 t(SELECT, "SELECT", 1, 1),
                 t(IDENTIFIER, "name", 2, 2),
@@ -174,7 +177,7 @@ class LexerIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"", "   ", "SELECT", "SELECT * FROM t;", "a;b;c", "'x' ; 'y'", "1 + 2\n"})
-    void eofAppearsExactlyOnceAndLast(String sql) {
+    void eofAppearsExactlyOnceAndLast(String sql) throws LexicalException {
         List<TokenType> types = types(sql);
 
         assertEquals(EOF, types.get(types.size() - 1));
@@ -203,7 +206,7 @@ class LexerIntegrationTest {
     }
 
     @Test
-    void resultListCannotBeModified() {
+    void resultListCannotBeModified() throws LexicalException {
         List<Token> tokens = lex("SELECT 1");
 
         assertThrows(UnsupportedOperationException.class, () -> tokens.add(t(EOF, "", 1, 1)));

@@ -1,5 +1,14 @@
 package com.avrosql.lexer;
 
+import com.avrosql.lexer.reader.IdentifierReader;
+import com.avrosql.lexer.reader.NumberReader;
+import com.avrosql.lexer.reader.OperatorReader;
+import com.avrosql.lexer.reader.StringReader;
+import com.avrosql.lexer.reader.TokenBuilder;
+import com.avrosql.lexer.reader.TokenReader;
+import com.avrosql.lexer.token.Token;
+import com.avrosql.lexer.token.TokenType;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -10,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LexerClassifyTest {
 
-    private static void lex(String source) {
+    private static void lex(String source) throws LexicalException {
         new Lexer(source).tokenize();
     }
 
@@ -28,26 +37,24 @@ class LexerClassifyTest {
                 new OperatorReader(), new NumberReader(), new StringReader(), new IdentifierReader());
         for (char c = 0; c < 128; c++) {
             final char ch = c;
-            long claimed = readers.stream().filter(r -> r.canStart(ch)).count();
+            long claimed = readers.stream().filter(r -> r.isToken(ch)).count();
             assertTrue(claimed <= 1, "character " + (int) c + " claimed by " + claimed + " readers");
         }
     }
 
     @Test
-    void newTokenKindNeedsOnlyANewReader() {
+    void newTokenKindNeedsOnlyANewReader() throws LexicalException {
         // Open/Closed: '#' becomes valid by plugging in a reader, without editing the Lexer.
         TokenReader hashReader = new TokenReader() {
             @Override
-            public boolean canStart(char c) {
+            public boolean isToken(char c) {
                 return c == '#';
             }
 
             @Override
-            public Token read(Cursor cursor) {
-                int line = cursor.line();
-                int column = cursor.column();
-                cursor.advance();
-                return new Token(TokenType.IDENTIFIER, "#", line, column);
+            protected TokenType scan(TokenBuilder token) {
+                token.take();
+                return TokenType.IDENTIFIER;
             }
         };
 
