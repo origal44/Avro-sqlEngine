@@ -3,13 +3,15 @@ package com.avrosql.lexer.token;
 import java.util.List;
 
 /**
- * Every category of token the Lexer can produce, and how each one is spelled in SQL.
- * This enum is the single source of truth: the readers build their lookup tables from it.
- * COUNT/SUM/AVG/MIN/MAX are intentionally absent: they are lexed as IDENTIFIER
- * and recognized by the Parser as function calls (IDENTIFIER followed by '(').
+ * All the token types the lexer can produce.
+ * The readers build their lookup tables from this enum, so adding a keyword
+ * or a symbol only needs a change here.
+ *
+ * COUNT, SUM, AVG, MIN and MAX aren't keywords. They come out as IDENTIFIER,
+ * and the parser treats an identifier followed by '(' as a function call.
  */
 public enum TokenType {
-    // Keywords: spelled exactly like the constant's name (matched case-insensitively)
+    // Keywords. The constant's name is how it's spelled (case-insensitive)
     SELECT(Category.KEYWORD), FROM(Category.KEYWORD), WHERE(Category.KEYWORD),
     AND(Category.KEYWORD), OR(Category.KEYWORD), NOT(Category.KEYWORD),
     IS(Category.KEYWORD), NULL(Category.KEYWORD), BETWEEN(Category.KEYWORD),
@@ -19,10 +21,10 @@ public enum TokenType {
     LIMIT(Category.KEYWORD), OFFSET(Category.KEYWORD),
     GROUP(Category.KEYWORD), HAVING(Category.KEYWORD),
 
-    // Literals and names: no fixed spelling
+    // Names and literal values
     IDENTIFIER(Category.LITERAL), NUMBER(Category.LITERAL), STRING(Category.LITERAL),
 
-    // Comparison operators
+    // Comparison
     EQUAL(Category.SYMBOL, "="),
     NOT_EQUAL(Category.SYMBOL, "<>", "!="),
     LESS(Category.SYMBOL, "<"),
@@ -30,7 +32,7 @@ public enum TokenType {
     GREATER(Category.SYMBOL, ">"),
     GREATER_EQUAL(Category.SYMBOL, ">="),
 
-    // Arithmetic operators
+    // Arithmetic
     PLUS(Category.SYMBOL, "+"),
     MINUS(Category.SYMBOL, "-"),
     STAR(Category.SYMBOL, "*"),
@@ -43,10 +45,10 @@ public enum TokenType {
     COMMA(Category.SYMBOL, ","),
     SEMICOLON(Category.SYMBOL, ";"),
 
-    // Sentinel: always the last token in the list
+    // End of input. The lexer always adds this one last
     EOF(Category.END);
 
-    /** What kind of token a type is, which decides which reader produces it. */
+    /** Decides which reader handles the token. */
     public enum Category { KEYWORD, LITERAL, SYMBOL, END }
 
     private final Category category;
@@ -61,7 +63,7 @@ public enum TokenType {
         return category;
     }
 
-    /** The exact spellings of a SYMBOL type (e.g. "<>" and "!=" for NOT_EQUAL); empty for every other category. */
+    /** How a SYMBOL is written ("<>" and "!=" for NOT_EQUAL). Empty for every other category. */
     public List<String> symbols() {
         return symbols;
     }

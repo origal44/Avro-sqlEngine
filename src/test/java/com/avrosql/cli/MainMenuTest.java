@@ -1,8 +1,5 @@
 package com.avrosql.cli;
 
-import com.avrosql.lexer.Lexer;
-import com.avrosql.lexer.LexicalException;
-import com.avrosql.lexer.token.TokenType;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -31,8 +28,7 @@ class MainMenuTest {
 
         assertTrue(output.contains("1. Tokenize SQL"));
         assertTrue(output.contains("2. How to use"));
-        assertTrue(output.contains("3. Token reference"));
-        assertTrue(output.contains("4. Error explanations"));
+        assertFalse(output.contains("3."));
         assertTrue(output.contains("0. Exit"));
         assertTrue(output.contains("New here? Choose 2 for instructions."));
         assertTrue(output.contains("Goodbye."));
@@ -73,28 +69,10 @@ class MainMenuTest {
     }
 
     @Test
-    void tokenReferenceListsEveryTokenType() {
-        String output = run("3", "", "0");
-
-        for (TokenType type : TokenType.values()) {
-            assertTrue(output.contains(type.name()), "missing " + type);
-        }
-        assertTrue(output.contains("<>  or  !="));
-    }
-
-    @Test
-    void howToUseAndErrorGuideReturnToTheMenu() {
-        String output = run("2", "", "4", "", "0");
+    void howToUseReturnsToTheMenu() {
+        String output = run("2", "", "0");
 
         assertTrue(output.contains("HOW TO USE"));
-        assertTrue(output.contains("ERROR EXPLANATIONS"));
         assertTrue(output.contains("Goodbye."));
-    }
-
-    @Test
-    void everyErrorExampleReallyFails() {
-        for (ErrorGuideScreen.ErrorExample example : ErrorGuideScreen.EXAMPLES) {
-            assertThrows(LexicalException.class, () -> new Lexer(example.sql()).tokenize(), example.name());
-        }
     }
 }

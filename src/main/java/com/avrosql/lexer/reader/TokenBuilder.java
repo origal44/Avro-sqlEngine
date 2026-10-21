@@ -1,8 +1,8 @@
 package com.avrosql.lexer.reader;
 
 import com.avrosql.lexer.Cursor;
-import com.avrosql.lexer.LexicalException;
-import com.avrosql.lexer.LexicalRuntimeException;
+import com.avrosql.lexer.exception.LexicalException;
+import com.avrosql.lexer.exception.LexicalRuntimeException;
 import com.avrosql.lexer.token.Token;
 import com.avrosql.lexer.token.TokenType;
 

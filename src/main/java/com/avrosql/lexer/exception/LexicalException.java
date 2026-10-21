@@ -1,4 +1,7 @@
-package com.avrosql.lexer;
+package com.avrosql.lexer.exception;
+
+import com.avrosql.lexer.Lexer;
+import com.avrosql.lexer.LexicalError;
 
 /**
  * Thrown by {@link Lexer#tokenize()} when the input cannot be turned into tokens.

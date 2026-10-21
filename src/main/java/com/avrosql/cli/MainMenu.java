@@ -20,9 +20,7 @@ public final class MainMenu {
     public MainMenu(Terminal terminal) {
         this(terminal, List.of(
                 new TokenizeScreen(),
-                new HowToUseScreen(),
-                new TokenReferenceScreen(),
-                new ErrorGuideScreen()));
+                new HowToUseScreen()));
     }
 
     MainMenu(Terminal terminal, List<Screen> screens) {

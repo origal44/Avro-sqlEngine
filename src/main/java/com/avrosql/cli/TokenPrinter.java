@@ -1,7 +1,7 @@
 package com.avrosql.cli;
 
 import com.avrosql.lexer.Lexer;
-import com.avrosql.lexer.LexicalException;
+import com.avrosql.lexer.exception.LexicalException;
 import com.avrosql.lexer.token.Token;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /** Runs the Lexer on one line of SQL and prints either a token table or the error with a caret under it. */
 final class TokenPrinter {
 
-    static final String INDENT = "  ";
+    private static final String INDENT = "  ";
     private static final String ROW = INDENT + "%-8s %-14s %s%n";
     private static final String POSITION = "%d:%d";
     private static final String HEADER_POSITION = "LINE:COL";

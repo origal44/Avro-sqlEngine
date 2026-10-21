@@ -1,5 +1,8 @@
 package com.avrosql.lexer;
 
+import com.avrosql.lexer.exception.LexicalException;
+import com.avrosql.lexer.exception.LexicalRuntimeException;
+
 /**
  * What every lexical error reports: the offending character and where it is.
  * Shared by the checked {@link LexicalException} and the unchecked {@link LexicalRuntimeException},

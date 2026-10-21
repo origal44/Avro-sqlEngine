@@ -1,5 +1,6 @@
 package com.avrosql.lexer;
 
+import com.avrosql.lexer.exception.LexicalException;
 import com.avrosql.lexer.token.Token;
 import com.avrosql.lexer.token.TokenType;
 

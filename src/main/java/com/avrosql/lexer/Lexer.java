@@ -1,5 +1,7 @@
 package com.avrosql.lexer;
 
+import com.avrosql.lexer.exception.LexicalException;
+import com.avrosql.lexer.exception.LexicalRuntimeException;
 import com.avrosql.lexer.reader.IdentifierReader;
 import com.avrosql.lexer.reader.NumberReader;
 import com.avrosql.lexer.reader.OperatorReader;

@@ -1,6 +1,8 @@
 package com.avrosql.lexer.reader;
 
 import com.avrosql.lexer.Cursor;
+import com.avrosql.lexer.exception.LexicalException;
+import com.avrosql.lexer.exception.LexicalRuntimeException;
 import com.avrosql.lexer.token.Token;
 import com.avrosql.lexer.token.TokenType;
 
@@ -19,8 +21,8 @@ public abstract class TokenReader {
     /**
      * Reads one token starting at the cursor's current position.
      * Called only when {@link #isToken(char)} returned true for {@code cursor.peek()}.
-     * Throws {@link com.avrosql.lexer.LexicalRuntimeException} for bad input; the Lexer turns it into the checked
-     * {@link com.avrosql.lexer.LexicalException}.
+     * Throws {@link LexicalRuntimeException} for bad input; the Lexer turns it into the checked
+     * {@link LexicalException}.
      */
     public final Token read(Cursor cursor) {
         TokenBuilder token = new TokenBuilder(cursor);

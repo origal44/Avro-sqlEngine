@@ -1,5 +1,7 @@
 package com.avrosql.lexer;
 
+import com.avrosql.lexer.exception.LexicalException;
+import com.avrosql.lexer.exception.LexicalRuntimeException;
 import com.avrosql.lexer.reader.OperatorReader;
 import org.junit.jupiter.api.Test;
 

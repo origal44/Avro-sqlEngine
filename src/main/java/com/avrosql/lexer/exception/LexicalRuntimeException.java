@@ -1,4 +1,7 @@
-package com.avrosql.lexer;
+package com.avrosql.lexer.exception;
+
+import com.avrosql.lexer.Lexer;
+import com.avrosql.lexer.LexicalError;
 
 /**
  * The unchecked form of a {@link LexicalException}, used inside the lexer.
