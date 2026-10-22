@@ -19,6 +19,7 @@ final class TokenizeScreen implements Screen {
             if (sql == null || sql.isBlank() ) {
                 return;
             }
+            terminal.println(INTRO);
             TokenPrinter.print(terminal, sql);
 
 
