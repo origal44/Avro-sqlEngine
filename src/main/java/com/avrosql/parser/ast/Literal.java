@@ -1,10 +1,6 @@
 package com.avrosql.parser.ast;
 
-/**
- * A constant value, already converted by the Parser so a bad number fails before any data is read.
- * The value is a Long, a Double, a String, or null for SQL NULL. Integer is not allowed:
- * {@code new Literal(30)} and {@code new Literal(30L)} would not be equal.
- */
+// Long, Double, String or null. Not Integer: Literal(30) wouldn't equal Literal(30L).
 public record Literal(Object value) implements Expr {
 
     public Literal {

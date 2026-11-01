@@ -13,14 +13,11 @@ import java.util.List;
 import static com.avrosql.lexer.token.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-/** The five token operations every parse method is built on. */
 class ParserCursorTest {
 
     private static Parser parser(String source) throws LexicalException {
         return new Parser(new Lexer(source).tokenize());
     }
-
-    // ---- construction ----
 
     @Test
     void rejectsEmptyTokenList() {
@@ -32,8 +29,6 @@ class ParserCursorTest {
         List<Token> tokens = List.of(new Token(SELECT, "SELECT", 1, 1));
         assertThrows(IllegalArgumentException.class, () -> new Parser(tokens));
     }
-
-    // ---- peek / advance ----
 
     @Test
     void peekDoesNotMove() throws LexicalException {
@@ -58,8 +53,6 @@ class ParserCursorTest {
         assertEquals(EOF, p.peek().type());
     }
 
-    // ---- check ----
-
     @Test
     void checkReportsTypeWithoutMoving() throws LexicalException {
         Parser p = parser("WHERE");
@@ -67,8 +60,6 @@ class ParserCursorTest {
         assertTrue(p.check(WHERE));
         assertEquals(WHERE, p.peek().type());
     }
-
-    // ---- match ----
 
     @Test
     void matchConsumesOnSuccess() throws LexicalException {
@@ -83,8 +74,6 @@ class ParserCursorTest {
         assertFalse(p.match(DESC));
         assertEquals(IDENTIFIER, p.peek().type());
     }
-
-    // ---- expect ----
 
     @Test
     void expectReturnsConsumedToken() throws LexicalException {
