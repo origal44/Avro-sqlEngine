@@ -29,8 +29,6 @@ class IdentifierReaderTest {
         return new Token(type, text, 1, column);
     }
 
-    // --- The reader on its own ---
-
     @ParameterizedTest
     @ValueSource(strings = {"age", "_name", "order_id", "col1", "A_1_b", "x"})
     void readsIdentifiers(String text) {
@@ -95,8 +93,6 @@ class IdentifierReaderTest {
         }
     }
 
-    // --- Through the Lexer ---
-
     @Test
     void orderByIsTwoKeywords() throws LexicalException {
         assertEquals(List.of(
@@ -119,7 +115,6 @@ class IdentifierReaderTest {
 
     @Test
     void numberFollowedByLettersIsTwoTokens() throws LexicalException {
-        // From Step 5: 42abc is NUMBER then IDENTIFIER, and the Parser rejects it.
         assertEquals(List.of(
                 token(NUMBER, "42", 1),
                 token(IDENTIFIER, "abc", 3),

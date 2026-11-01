@@ -27,8 +27,6 @@ class NumberReaderTest {
         return new Token(type, text, 1, column);
     }
 
-    // --- The reader on its own ---
-
     @ParameterizedTest
     @ValueSource(strings = {"0", "7", "42", "007", "1234567890"})
     void readsIntegers(String text) {
@@ -55,8 +53,6 @@ class NumberReaderTest {
         assertEquals(token(NUMBER, "42", 1), reader.read(cursor));
         assertEquals('a', cursor.peek());
     }
-
-    // --- Through the Lexer ---
 
     @Test
     void numberOperatorNumber() throws LexicalException {
