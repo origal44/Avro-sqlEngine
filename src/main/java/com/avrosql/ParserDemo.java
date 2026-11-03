@@ -32,6 +32,7 @@ public final class ParserDemo {
                 return;
             }
             terminal.println(describe(sql));
+            terminal.println("Enter an empty line to exit.");
         }
     }
 
