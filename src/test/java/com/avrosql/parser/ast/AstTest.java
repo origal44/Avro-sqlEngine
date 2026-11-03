@@ -177,7 +177,7 @@ class AstTest {
         // the shape of "SELECT name, * FROM users"
         List<SelectItem> items = List.of(SelectItem.of(new ColumnRef("name")));
         assertThrows(IllegalArgumentException.class,
-                () -> new SelectStatement(false, true, items, "users", Optional.empty()));
+                () -> new SelectStatement(false, true, items, "users", Optional.empty(), List.of(), Optional.empty()));
     }
 
     @Test
@@ -207,7 +207,7 @@ class AstTest {
         assertEquals(Optional.of(condition), filtered.where());
         assertTrue(filtered.selectAll());
         assertThrows(NullPointerException.class,
-                () -> new SelectStatement(false, true, List.of(), "users", null));
+                () -> new SelectStatement(false, true, List.of(), "users", null, List.of(), Optional.empty()));
     }
 
     @Test
@@ -234,5 +234,21 @@ class AstTest {
         assertEquals(a, b);
         assertNotEquals(a, SelectStatement.of(List.of(SelectItem.of(new ColumnRef("name"))), "users"));
         assertNotEquals(a, a.withDistinct());
+    }
+    @Test
+    void havingNeedsGroupBy() {
+        Expr condition = new Binary(new ColumnRef("a"), TokenType.GREATER, new Literal(1L));
+        assertThrows(IllegalArgumentException.class, () -> SelectStatement.all("t").withHaving(condition));
+        SelectStatement grouped = SelectStatement.all("t").withGroupBy(List.of(new ColumnRef("a"))).withHaving(condition);
+        assertEquals(Optional.of(condition), grouped.having());
+    }
+
+    @Test
+    void groupByIsCopiedAndImmutable() {
+        List<Expr> keys = new ArrayList<>(List.of(new ColumnRef("city")));
+        SelectStatement s = SelectStatement.all("users").withGroupBy(keys);
+        keys.add(new ColumnRef("age"));
+        assertEquals(1, s.groupBy().size());
+        assertThrows(UnsupportedOperationException.class, () -> s.groupBy().add(new ColumnRef("x")));
     }
 }

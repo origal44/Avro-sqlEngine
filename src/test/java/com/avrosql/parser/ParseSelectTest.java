@@ -277,4 +277,71 @@ class ParseSelectTest {
     void distinctOnlyRightAfterSelect() {
         assertSyntaxError("SELECT name DISTINCT FROM users;", FROM, "'DISTINCT' (DISTINCT)", 1, 13);
     }
+    private static final Expr COUNT_STAR = new Aggregate(Aggregate.Function.COUNT, Optional.empty());
+
+    @Test
+    void groupBySingleKey() throws Exception {
+        assertEquals(SelectStatement.of(items(col("city"), COUNT_STAR), "users").withGroupBy(List.of(col("city"))),
+                parse("SELECT city, COUNT(*) FROM users GROUP BY city;"));
+    }
+
+    @Test
+    void groupBySeveralKeysAndExpressions() throws Exception {
+        Expr decade = new Binary(col("age"), SLASH, num(10));
+        assertEquals(SelectStatement.of(items(col("city")), "users").withGroupBy(List.of(col("city"), decade)),
+                parse("select city from users group by city, age / 10;"));
+    }
+
+    @Test
+    void whereGroupByHaving() throws Exception {
+        Expr where = new Binary(col("age"), GREATER, num(18));
+        Expr having = new Binary(
+                new Binary(COUNT_STAR, GREATER, num(5)),
+                AND,
+                new Binary(new Aggregate(Aggregate.Function.AVG, Optional.of(col("age"))), LESS, num(40)));
+        assertEquals(SelectStatement.of(items(col("city")), "users")
+                        .withWhere(where).withGroupBy(List.of(col("city"))).withHaving(having),
+                parse("SELECT city FROM users WHERE age > 18 GROUP BY city HAVING COUNT(*) > 5 AND AVG(age) < 40;"));
+    }
+
+    @Test
+    void groupByWithoutHavingLeavesItEmpty() throws Exception {
+        SelectStatement s = parse("SELECT city FROM users GROUP BY city;");
+        assertTrue(s.having().isEmpty());
+        assertTrue(parse("SELECT city FROM users;").groupBy().isEmpty());
+    }
+
+    @Test
+    void groupNeedsBy() {
+        assertSyntaxError("SELECT city FROM users GROUP city;", BY, "'city' (IDENTIFIER)", 1, 30);
+    }
+
+    @Test
+    void groupByNeedsAKey() {
+        assertError("SELECT city FROM users GROUP BY;",
+                "Expected an expression but found ';' (SEMICOLON) at line 1, column 32");
+        assertError("SELECT city FROM users GROUP BY city, ;",
+                "Expected an expression but found ';' (SEMICOLON) at line 1, column 39");
+    }
+
+    @Test
+    void groupByKeysNeedCommas() {
+        assertSyntaxError("SELECT city FROM users GROUP BY city age;", SEMICOLON, "'age' (IDENTIFIER)", 1, 38);
+    }
+
+    @Test
+    void havingNeedsGroupBy() {
+        assertSyntaxError("SELECT COUNT(*) FROM users HAVING COUNT(*) > 5;", SEMICOLON, "'HAVING' (HAVING)", 1, 28);
+    }
+
+    @Test
+    void havingNeedsACondition() {
+        assertError("SELECT city FROM users GROUP BY city HAVING;",
+                "Expected an expression but found ';' (SEMICOLON) at line 1, column 44");
+    }
+
+    @Test
+    void whereMustComeBeforeGroupBy() {
+        assertSyntaxError("SELECT city FROM users GROUP BY city WHERE age > 1;", SEMICOLON, "'WHERE' (WHERE)", 1, 38);
+    }
 }

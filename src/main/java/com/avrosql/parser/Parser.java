@@ -65,13 +65,36 @@ public final class Parser {
         expect(TokenType.FROM);
         String table = expect(TokenType.IDENTIFIER).text();
         Optional<Expr> where = parseWhere();
+        List<Expr> groupBy = parseGroupBy();
+        // HAVING is only looked for after a GROUP BY; otherwise it's left for expect(SEMICOLON) to reject
+        Optional<Expr> having = groupBy.isEmpty() ? Optional.empty() : parseHaving();
         expect(TokenType.SEMICOLON);
         expect(TokenType.EOF);
-        return new SelectStatement(distinct, selectAll, items, table, where);
+        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having);
     }
 
     private Optional<Expr> parseWhere() {
         if (!match(TokenType.WHERE)) {
+            return Optional.empty();
+        }
+        return Optional.of(parseExpression());
+    }
+
+    private List<Expr> parseGroupBy() {
+        if (!match(TokenType.GROUP)) {
+            return List.of();
+        }
+        expect(TokenType.BY);
+        List<Expr> keys = new ArrayList<>();
+        keys.add(parseExpression());
+        while (match(TokenType.COMMA)) {
+            keys.add(parseExpression());
+        }
+        return keys;
+    }
+
+    private Optional<Expr> parseHaving() {
+        if (!match(TokenType.HAVING)) {
             return Optional.empty();
         }
         return Optional.of(parseExpression());
