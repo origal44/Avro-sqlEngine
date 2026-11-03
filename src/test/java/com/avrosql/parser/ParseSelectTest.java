@@ -11,6 +11,7 @@ import com.avrosql.parser.ast.Expr;
 import com.avrosql.parser.ast.In;
 import com.avrosql.parser.ast.IsNull;
 import com.avrosql.parser.ast.Literal;
+import com.avrosql.parser.ast.OrderItem;
 import com.avrosql.parser.ast.SelectItem;
 import com.avrosql.parser.ast.SelectStatement;
 import com.avrosql.parser.ast.Unary;
@@ -343,5 +344,60 @@ class ParseSelectTest {
     @Test
     void whereMustComeBeforeGroupBy() {
         assertSyntaxError("SELECT city FROM users GROUP BY city WHERE age > 1;", SEMICOLON, "'WHERE' (WHERE)", 1, 38);
+    }
+    @Test
+    void orderByDefaultsToAsc() throws Exception {
+        assertEquals(SelectStatement.of(items(col("name")), "users").withOrderBy(List.of(OrderItem.asc(col("age")))),
+                parse("SELECT name FROM users ORDER BY age;"));
+    }
+
+    @Test
+    void orderBySeveralKeysWithDirections() throws Exception {
+        List<OrderItem> order = List.of(OrderItem.desc(col("age")), OrderItem.asc(col("name")), OrderItem.asc(col("city")));
+        assertEquals(SelectStatement.all("users").withOrderBy(order),
+                parse("SELECT * FROM users ORDER BY age DESC, name ASC, city;"));
+    }
+
+    @Test
+    void orderByExpression() throws Exception {
+        Expr total = new Binary(col("price"), STAR, col("qty"));
+        assertEquals(SelectStatement.all("orders").withOrderBy(List.of(OrderItem.desc(total))),
+                parse("select * from orders order by price * qty desc;"));
+    }
+
+    @Test
+    void allClausesTogether() throws Exception {
+        SelectStatement expected = SelectStatement.of(items(col("city"), COUNT_STAR), "users")
+                .withWhere(new Binary(col("age"), GREATER, num(18)))
+                .withGroupBy(List.of(col("city")))
+                .withHaving(new Binary(COUNT_STAR, GREATER, num(5)))
+                .withOrderBy(List.of(OrderItem.desc(COUNT_STAR), OrderItem.asc(col("city"))));
+        assertEquals(expected, parse("SELECT city, COUNT(*) FROM users WHERE age > 18 GROUP BY city "
+                + "HAVING COUNT(*) > 5 ORDER BY COUNT(*) DESC, city;"));
+    }
+
+    @Test
+    void orderNeedsBy() {
+        assertSyntaxError("SELECT name FROM users ORDER age;", BY, "'age' (IDENTIFIER)", 1, 30);
+    }
+
+    @Test
+    void orderByNeedsAKey() {
+        assertError("SELECT name FROM users ORDER BY;",
+                "Expected an expression but found ';' (SEMICOLON) at line 1, column 32");
+        assertError("SELECT name FROM users ORDER BY age, ;",
+                "Expected an expression but found ';' (SEMICOLON) at line 1, column 38");
+        assertError("SELECT name FROM users ORDER BY DESC;",
+                "Expected an expression but found 'DESC' (DESC) at line 1, column 33");
+    }
+
+    @Test
+    void oneDirectionPerKey() {
+        assertSyntaxError("SELECT name FROM users ORDER BY age DESC ASC;", SEMICOLON, "'ASC' (ASC)", 1, 42);
+    }
+
+    @Test
+    void orderByComesLast() {
+        assertSyntaxError("SELECT name FROM users ORDER BY age GROUP BY name;", SEMICOLON, "'GROUP' (GROUP)", 1, 37);
     }
 }

@@ -10,6 +10,7 @@ import com.avrosql.parser.ast.Expr;
 import com.avrosql.parser.ast.In;
 import com.avrosql.parser.ast.IsNull;
 import com.avrosql.parser.ast.Literal;
+import com.avrosql.parser.ast.OrderItem;
 import com.avrosql.parser.ast.SelectItem;
 import com.avrosql.parser.ast.SelectStatement;
 import com.avrosql.parser.ast.Unary;
@@ -68,9 +69,10 @@ public final class Parser {
         List<Expr> groupBy = parseGroupBy();
         // HAVING is only looked for after a GROUP BY; otherwise it's left for expect(SEMICOLON) to reject
         Optional<Expr> having = groupBy.isEmpty() ? Optional.empty() : parseHaving();
+        List<OrderItem> orderBy = parseOrderBy();
         expect(TokenType.SEMICOLON);
         expect(TokenType.EOF);
-        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having);
+        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having, orderBy);
     }
 
     private Optional<Expr> parseWhere() {
@@ -98,6 +100,29 @@ public final class Parser {
             return Optional.empty();
         }
         return Optional.of(parseExpression());
+    }
+
+    private List<OrderItem> parseOrderBy() {
+        if (!match(TokenType.ORDER)) {
+            return List.of();
+        }
+        expect(TokenType.BY);
+        List<OrderItem> order = new ArrayList<>();
+        order.add(parseOrderItem());
+        while (match(TokenType.COMMA)) {
+            order.add(parseOrderItem());
+        }
+        return order;
+    }
+
+    // ASC is the default, so it's optional
+    private OrderItem parseOrderItem() {
+        Expr expression = parseExpression();
+        if (match(TokenType.DESC)) {
+            return OrderItem.desc(expression);
+        }
+        match(TokenType.ASC);
+        return OrderItem.asc(expression);
     }
 
     private List<SelectItem> parseSelectList() {

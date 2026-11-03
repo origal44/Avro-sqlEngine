@@ -177,7 +177,7 @@ class AstTest {
         // the shape of "SELECT name, * FROM users"
         List<SelectItem> items = List.of(SelectItem.of(new ColumnRef("name")));
         assertThrows(IllegalArgumentException.class,
-                () -> new SelectStatement(false, true, items, "users", Optional.empty(), List.of(), Optional.empty()));
+                () -> new SelectStatement(false, true, items, "users", Optional.empty(), List.of(), Optional.empty(), List.of()));
     }
 
     @Test
@@ -207,7 +207,7 @@ class AstTest {
         assertEquals(Optional.of(condition), filtered.where());
         assertTrue(filtered.selectAll());
         assertThrows(NullPointerException.class,
-                () -> new SelectStatement(false, true, List.of(), "users", null, List.of(), Optional.empty()));
+                () -> new SelectStatement(false, true, List.of(), "users", null, List.of(), Optional.empty(), List.of()));
     }
 
     @Test
@@ -250,5 +250,20 @@ class AstTest {
         keys.add(new ColumnRef("age"));
         assertEquals(1, s.groupBy().size());
         assertThrows(UnsupportedOperationException.class, () -> s.groupBy().add(new ColumnRef("x")));
+    }
+    @Test
+    void orderItemDirections() {
+        assertEquals(OrderItem.Direction.ASC, OrderItem.asc(new ColumnRef("a")).direction());
+        assertEquals(OrderItem.Direction.DESC, OrderItem.desc(new ColumnRef("a")).direction());
+        assertThrows(NullPointerException.class, () -> new OrderItem(new ColumnRef("a"), null));
+    }
+
+    @Test
+    void orderByIsCopiedAndImmutable() {
+        List<OrderItem> order = new ArrayList<>(List.of(OrderItem.asc(new ColumnRef("a"))));
+        SelectStatement s = SelectStatement.all("t").withOrderBy(order);
+        order.add(OrderItem.desc(new ColumnRef("b")));
+        assertEquals(1, s.orderBy().size());
+        assertThrows(UnsupportedOperationException.class, () -> s.orderBy().add(OrderItem.asc(new ColumnRef("x"))));
     }
 }
