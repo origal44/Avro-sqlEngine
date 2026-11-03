@@ -38,6 +38,7 @@ public final class Parser {
     private static final String CHAINED_COMPARISON = "Comparisons can't be chained: found %s";
     private static final String EXPECTED_IN_OR_LIKE = "Expected IN or LIKE but found %s";
     private static final String UNKNOWN_FUNCTION = "Unknown function '%s'";
+    private static final String EXPECTED_INTEGER = "Expected a whole number but found %s";
 
     private final List<Token> tokens;
     private int current = 0;
@@ -70,9 +71,11 @@ public final class Parser {
         // HAVING is only looked for after a GROUP BY; otherwise it's left for expect(SEMICOLON) to reject
         Optional<Expr> having = groupBy.isEmpty() ? Optional.empty() : parseHaving();
         List<OrderItem> orderBy = parseOrderBy();
+        Optional<Long> limit = parseLimit();
+        Optional<Long> offset = limit.isEmpty() ? Optional.empty() : parseOffset();
         expect(TokenType.SEMICOLON);
         expect(TokenType.EOF);
-        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having, orderBy);
+        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having, orderBy, limit, offset);
     }
 
     private Optional<Expr> parseWhere() {
@@ -123,6 +126,33 @@ public final class Parser {
         }
         match(TokenType.ASC);
         return OrderItem.asc(expression);
+    }
+
+    private Optional<Long> parseLimit() {
+        if (!match(TokenType.LIMIT)) {
+            return Optional.empty();
+        }
+        return Optional.of(wholeNumber());
+    }
+
+    private Optional<Long> parseOffset() {
+        if (!match(TokenType.OFFSET)) {
+            return Optional.empty();
+        }
+        return Optional.of(wholeNumber());
+    }
+
+    // a plain NUMBER token, not an expression: no minus sign, no 1 + 1
+    private long wholeNumber() {
+        Token token = expect(TokenType.NUMBER);
+        if (token.text().indexOf('.') >= 0) {
+            throw error(EXPECTED_INTEGER.formatted(SyntaxException.describe(token)), token);
+        }
+        try {
+            return Long.parseLong(token.text());
+        } catch (NumberFormatException e) {
+            throw error(NUMBER_TOO_LARGE.formatted(token.text()), token);
+        }
     }
 
     private List<SelectItem> parseSelectList() {

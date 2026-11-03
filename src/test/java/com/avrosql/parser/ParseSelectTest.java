@@ -400,4 +400,76 @@ class ParseSelectTest {
     void orderByComesLast() {
         assertSyntaxError("SELECT name FROM users ORDER BY age GROUP BY name;", SEMICOLON, "'GROUP' (GROUP)", 1, 37);
     }
+    @Test
+    void limit() throws Exception {
+        assertEquals(SelectStatement.all("users").withLimit(10), parse("SELECT * FROM users LIMIT 10;"));
+        assertEquals(SelectStatement.all("users").withLimit(0), parse("select * from users limit 0;"));
+    }
+
+    @Test
+    void limitWithOffset() throws Exception {
+        assertEquals(SelectStatement.all("users").withLimit(10).withOffset(20),
+                parse("SELECT * FROM users LIMIT 10 OFFSET 20;"));
+    }
+
+    @Test
+    void limitWithoutOffsetLeavesItEmpty() throws Exception {
+        SelectStatement s = parse("SELECT * FROM users LIMIT 10;");
+        assertTrue(s.offset().isEmpty());
+        assertTrue(parse("SELECT * FROM users;").limit().isEmpty());
+    }
+
+    @Test
+    void limitAfterOrderBy() throws Exception {
+        assertEquals(SelectStatement.of(items(col("name")), "users")
+                        .withOrderBy(List.of(OrderItem.desc(col("age")))).withLimit(5).withOffset(1),
+                parse("SELECT name FROM users ORDER BY age DESC LIMIT 5 OFFSET 1;"));
+    }
+
+    @Test
+    void limitNeedsANumber() {
+        assertSyntaxError("SELECT name FROM users LIMIT;", NUMBER, "';' (SEMICOLON)", 1, 29);
+        assertSyntaxError("SELECT name FROM users LIMIT x;", NUMBER, "'x' (IDENTIFIER)", 1, 30);
+        assertSyntaxError("SELECT name FROM users LIMIT '5';", NUMBER, "''5'' (STRING)", 1, 30);
+    }
+
+    @Test
+    void limitRejectsNegativeNumbers() {
+        assertSyntaxError("SELECT name FROM users LIMIT -1;", NUMBER, "'-' (MINUS)", 1, 30);
+    }
+
+    @Test
+    void limitRejectsDecimals() {
+        assertError("SELECT name FROM users LIMIT 2.5;",
+                "Expected a whole number but found '2.5' (NUMBER) at line 1, column 30");
+        assertError("SELECT name FROM users LIMIT 10 OFFSET 2.5;",
+                "Expected a whole number but found '2.5' (NUMBER) at line 1, column 40");
+    }
+
+    @Test
+    void limitRejectsHugeNumbers() {
+        assertError("SELECT name FROM users LIMIT 99999999999999999999;",
+                "Number too large: '99999999999999999999' at line 1, column 30");
+    }
+
+    @Test
+    void limitIsNotAnExpression() {
+        assertSyntaxError("SELECT name FROM users LIMIT 1 + 1;", SEMICOLON, "'+' (PLUS)", 1, 32);
+    }
+
+    @Test
+    void offsetNeedsANumber() {
+        assertSyntaxError("SELECT name FROM users LIMIT 10 OFFSET;", NUMBER, "';' (SEMICOLON)", 1, 39);
+    }
+
+    @Test
+    void offsetNeedsLimit() {
+        assertSyntaxError("SELECT name FROM users OFFSET 5;", SEMICOLON, "'OFFSET' (OFFSET)", 1, 24);
+    }
+
+    @Test
+    void limitComesLast() {
+        assertSyntaxError("SELECT name FROM users LIMIT 5 ORDER BY name;", SEMICOLON, "'ORDER' (ORDER)", 1, 32);
+        assertSyntaxError("SELECT name FROM users LIMIT 5 LIMIT 6;", SEMICOLON, "'LIMIT' (LIMIT)", 1, 32);
+    }
 }

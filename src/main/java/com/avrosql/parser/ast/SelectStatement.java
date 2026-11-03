@@ -7,7 +7,7 @@ import java.util.Optional;
 // '*' is the selectAll flag, not an item. An empty groupBy or orderBy means the clause is absent.
 public record SelectStatement(boolean distinct, boolean selectAll, List<SelectItem> items, String table,
                               Optional<Expr> where, List<Expr> groupBy, Optional<Expr> having,
-                              List<OrderItem> orderBy) {
+                              List<OrderItem> orderBy, Optional<Long> limit, Optional<Long> offset) {
 
     public SelectStatement {
         items = List.copyOf(items); // also rejects null items
@@ -16,6 +16,8 @@ public record SelectStatement(boolean distinct, boolean selectAll, List<SelectIt
         Objects.requireNonNull(table, "table");
         Objects.requireNonNull(where, "where");
         Objects.requireNonNull(having, "having");
+        Objects.requireNonNull(limit, "limit");
+        Objects.requireNonNull(offset, "offset");
         if (selectAll && !items.isEmpty()) {
             throw new IllegalArgumentException("SELECT * cannot also list columns");
         }
@@ -25,37 +27,53 @@ public record SelectStatement(boolean distinct, boolean selectAll, List<SelectIt
         if (having.isPresent() && groupBy.isEmpty()) {
             throw new IllegalArgumentException("HAVING needs GROUP BY");
         }
+        if (offset.isPresent() && limit.isEmpty()) {
+            throw new IllegalArgumentException("OFFSET needs LIMIT");
+        }
+        if (limit.orElse(0L) < 0 || offset.orElse(0L) < 0) {
+            throw new IllegalArgumentException("LIMIT and OFFSET must not be negative");
+        }
     }
 
     public static SelectStatement all(String table) {
         return new SelectStatement(false, true, List.of(), table, Optional.empty(), List.of(), Optional.empty(),
-                List.of());
+                List.of(), Optional.empty(), Optional.empty());
     }
 
     public static SelectStatement of(List<SelectItem> items, String table) {
         return new SelectStatement(false, false, items, table, Optional.empty(), List.of(), Optional.empty(),
-                List.of());
+                List.of(), Optional.empty(), Optional.empty());
     }
 
     public SelectStatement withDistinct() {
-        return new SelectStatement(true, selectAll, items, table, where, groupBy, having, orderBy);
+        return new SelectStatement(true, selectAll, items, table, where, groupBy, having, orderBy, limit, offset);
     }
 
     public SelectStatement withWhere(Expr condition) {
         return new SelectStatement(distinct, selectAll, items, table, Optional.of(condition), groupBy, having,
-                orderBy);
+                orderBy, limit, offset);
     }
 
     public SelectStatement withGroupBy(List<Expr> keys) {
-        return new SelectStatement(distinct, selectAll, items, table, where, keys, having, orderBy);
+        return new SelectStatement(distinct, selectAll, items, table, where, keys, having, orderBy, limit, offset);
     }
 
     public SelectStatement withHaving(Expr condition) {
         return new SelectStatement(distinct, selectAll, items, table, where, groupBy, Optional.of(condition),
-                orderBy);
+                orderBy, limit, offset);
     }
 
     public SelectStatement withOrderBy(List<OrderItem> order) {
-        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having, order);
+        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having, order, limit, offset);
+    }
+
+    public SelectStatement withLimit(long rows) {
+        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having, orderBy,
+                Optional.of(rows), offset);
+    }
+
+    public SelectStatement withOffset(long rows) {
+        return new SelectStatement(distinct, selectAll, items, table, where, groupBy, having, orderBy, limit,
+                Optional.of(rows));
     }
 }

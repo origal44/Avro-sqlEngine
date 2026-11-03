@@ -177,7 +177,8 @@ class AstTest {
         // the shape of "SELECT name, * FROM users"
         List<SelectItem> items = List.of(SelectItem.of(new ColumnRef("name")));
         assertThrows(IllegalArgumentException.class,
-                () -> new SelectStatement(false, true, items, "users", Optional.empty(), List.of(), Optional.empty(), List.of()));
+                () -> new SelectStatement(false, true, items, "users", Optional.empty(), List.of(), Optional.empty(), List.of(),
+                        Optional.empty(), Optional.empty()));
     }
 
     @Test
@@ -207,7 +208,8 @@ class AstTest {
         assertEquals(Optional.of(condition), filtered.where());
         assertTrue(filtered.selectAll());
         assertThrows(NullPointerException.class,
-                () -> new SelectStatement(false, true, List.of(), "users", null, List.of(), Optional.empty(), List.of()));
+                () -> new SelectStatement(false, true, List.of(), "users", null, List.of(), Optional.empty(), List.of(),
+                        Optional.empty(), Optional.empty()));
     }
 
     @Test
@@ -265,5 +267,18 @@ class AstTest {
         order.add(OrderItem.desc(new ColumnRef("b")));
         assertEquals(1, s.orderBy().size());
         assertThrows(UnsupportedOperationException.class, () -> s.orderBy().add(OrderItem.asc(new ColumnRef("x"))));
+    }
+    @Test
+    void offsetNeedsLimit() {
+        assertThrows(IllegalArgumentException.class, () -> SelectStatement.all("t").withOffset(5));
+        SelectStatement s = SelectStatement.all("t").withLimit(10).withOffset(5);
+        assertEquals(Optional.of(10L), s.limit());
+        assertEquals(Optional.of(5L), s.offset());
+    }
+
+    @Test
+    void limitAndOffsetMustNotBeNegative() {
+        assertThrows(IllegalArgumentException.class, () -> SelectStatement.all("t").withLimit(-1));
+        assertThrows(IllegalArgumentException.class, () -> SelectStatement.all("t").withLimit(1).withOffset(-1));
     }
 }
