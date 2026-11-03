@@ -36,7 +36,7 @@ public final class Parser {
     private static final String EXPECTED_EXPRESSION = "Expected an expression but found %s";
     private static final String NUMBER_TOO_LARGE = "Number too large: '%s'";
     private static final String CHAINED_COMPARISON = "Comparisons can't be chained: found %s";
-    private static final String EXPECTED_IN_OR_LIKE = "Expected IN or LIKE but found %s";
+    private static final String EXPECTED_AFTER_NOT = "Expected IN, LIKE or BETWEEN but found %s";
     private static final String UNKNOWN_FUNCTION = "Unknown function '%s'";
     private static final String EXPECTED_INTEGER = "Expected a whole number but found %s";
 
@@ -234,7 +234,10 @@ public final class Parser {
         if (match(TokenType.LIKE)) {
             return new Unary(TokenType.NOT, new Binary(value, TokenType.LIKE, parseExpression(COMPARISON)));
         }
-        throw error(EXPECTED_IN_OR_LIKE.formatted(SyntaxException.describe(next)), next);
+        if (match(TokenType.BETWEEN)) {
+            return new Unary(TokenType.NOT, parseBetween(value));
+        }
+        throw error(EXPECTED_AFTER_NOT.formatted(SyntaxException.describe(next)), next);
     }
 
     private Expr parsePrefix() {

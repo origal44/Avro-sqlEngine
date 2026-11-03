@@ -340,7 +340,7 @@ class ParseExpressionTest {
     void nullWithoutIs() {
         assertError("a NULL", "Expected EOF but found 'NULL' (NULL) at line 1, column 3");
         // NOT after a left side must start NOT IN or NOT LIKE
-        assertError("a NOT NULL", "Expected IN or LIKE but found 'NULL' (NULL) at line 1, column 7");
+        assertError("a NOT NULL", "Expected IN, LIKE or BETWEEN but found 'NULL' (NULL) at line 1, column 7");
     }
 
     @Test
@@ -448,11 +448,30 @@ class ParseExpressionTest {
     }
 
     @Test
-    void infixNotMustBeFollowedByInOrLike() {
-        SyntaxException e = assertError("a NOT (1)", "Expected IN or LIKE but found '(' (LEFT_PAREN) at line 1, column 7");
+    void infixNotMustBeFollowedByInLikeOrBetween() {
+        SyntaxException e = assertError("a NOT (1)",
+                "Expected IN, LIKE or BETWEEN but found '(' (LEFT_PAREN) at line 1, column 7");
         assertNull(e.expected());
-        assertError("a NOT", "Expected IN or LIKE but found end of input (EOF) at line 1, column 6");
-        assertError("a NOT 5", "Expected IN or LIKE but found '5' (NUMBER) at line 1, column 7");
+        assertError("a NOT", "Expected IN, LIKE or BETWEEN but found end of input (EOF) at line 1, column 6");
+        assertError("a NOT 5", "Expected IN, LIKE or BETWEEN but found '5' (NUMBER) at line 1, column 7");
+    }
+
+    @Test
+    void notBetween() throws Exception {
+        assertEquals(un(NOT, between(col("a"), num(1), num(5))), parse("a NOT BETWEEN 1 AND 5"));
+        assertEquals(parse("NOT a BETWEEN 1 AND 5"), parse("a NOT BETWEEN 1 AND 5"));
+    }
+
+    @Test
+    void notBetweenWithLogic() throws Exception {
+        assertEquals(bin(un(NOT, between(col("a"), num(1), num(5))), AND, bin(col("b"), EQUAL, num(2))),
+                parse("a NOT BETWEEN 1 AND 5 AND b = 2"));
+    }
+
+    @Test
+    void notBetweenErrors() {
+        assertError("a NOT BETWEEN 1 OR 5", "Expected AND but found 'OR' (OR) at line 1, column 17");
+        assertError("a NOT BETWEEN 1 AND 5 < 3", "Comparisons can't be chained: found '<' (LESS) at line 1, column 23");
     }
 
     @Test
