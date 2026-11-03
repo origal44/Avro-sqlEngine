@@ -6,7 +6,6 @@ import com.avrosql.lexer.token.Token;
 
 import java.util.List;
 
-/** Runs the Lexer on one line of SQL and prints either a token table or the error with a caret under it. */
 final class TokenPrinter {
 
     private static final String INDENT = "  ";

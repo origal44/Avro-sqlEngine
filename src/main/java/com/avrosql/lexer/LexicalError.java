@@ -3,11 +3,7 @@ package com.avrosql.lexer;
 import com.avrosql.lexer.exception.LexicalException;
 import com.avrosql.lexer.exception.LexicalRuntimeException;
 
-/**
- * What every lexical error reports: the offending character and where it is.
- * Shared by the checked {@link LexicalException} and the unchecked {@link LexicalRuntimeException},
- * which cannot share a superclass because one extends Exception and the other RuntimeException.
- */
+// The checked and unchecked exceptions can't share a superclass, so they share this.
 public interface LexicalError {
 
     char character();

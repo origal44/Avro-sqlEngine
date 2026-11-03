@@ -1,12 +1,7 @@
 package com.avrosql.lexer;
 
-/**
- * Reads the source one character at a time and tracks the current line and column.
- * This is the only class that touches the raw string index.
- */
 public final class Cursor {
 
-    /** Returned by {@link #peek()} when there are no more characters. */
     public static final char END = '\0';
 
     private final String source;
@@ -22,17 +17,14 @@ public final class Cursor {
         return current >= source.length();
     }
 
-    /** Returns the current character without consuming it, or END at the end of input. */
     public char peek() {
         return isAtEnd() ? END : source.charAt(current);
     }
 
-    /** Returns the character after the current one without consuming anything, or END if there is none. */
     public char peekNext() {
         return current + 1 >= source.length() ? END : source.charAt(current + 1);
     }
 
-    /** Consumes and returns the current character, updating line and column. */
     public char advance() {
         if (isAtEnd()) {
             throw new IllegalStateException("advance() called at end of input");

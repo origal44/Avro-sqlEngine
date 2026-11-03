@@ -2,7 +2,6 @@ package com.avrosql.cli;
 
 import java.util.List;
 
-/** The numbered main menu: shows the options, runs the chosen screen, and comes back until the user exits. */
 public final class MainMenu {
 
     private static final int EXIT_CHOICE = 0;
@@ -60,7 +59,6 @@ public final class MainMenu {
         terminal.printf(OPTION_ROW, EXIT_CHOICE, EXIT_TITLE);
     }
 
-    /** The screen for a menu number, or null if the text is not a valid option. */
     private Screen screenFor(String choice) {
         try {
             int number = Integer.parseInt(choice);
@@ -70,7 +68,6 @@ public final class MainMenu {
         }
     }
 
-    /** The menu number of the first screen of this type, or EXIT_CHOICE if there is none. */
     private int numberOf(Class<? extends Screen> type) {
         for (int i = 0; i < screens.size(); i++) {
             if (type.isInstance(screens.get(i))) {

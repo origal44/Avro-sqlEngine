@@ -1,9 +1,5 @@
 package com.avrosql.lexer;
 
-/**
- * Character classes shared by the Lexer and the readers.
- * ASCII only, matching Avro's name rule [A-Za-z_][A-Za-z0-9_]*.
- */
 public final class Chars {
 
     public static final char NEWLINE = '\n';

@@ -45,7 +45,6 @@ class LexerClassifyTest {
 
     @Test
     void newTokenKindNeedsOnlyANewReader() throws LexicalException {
-        // Open/Closed: '#' becomes valid by plugging in a reader, without editing the Lexer.
         TokenReader hashReader = new TokenReader() {
             @Override
             public boolean isToken(char c) {

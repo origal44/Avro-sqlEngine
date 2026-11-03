@@ -18,7 +18,6 @@ class TokenTest {
 
     @Test
     void tokensWithSameFieldsAreEqual() {
-        // Later tests compare whole token lists, so value equality matters.
         assertEquals(new Token(TokenType.NUMBER, "42", 1, 5),
                      new Token(TokenType.NUMBER, "42", 1, 5));
     }
@@ -58,7 +57,6 @@ class TokenTest {
 
     @Test
     void aggregateFunctionsAreNotKeywords() {
-        // Decision: COUNT/SUM/AVG/MIN/MAX are lexed as IDENTIFIER.
         for (String name : new String[] {"COUNT", "SUM", "AVG", "MIN", "MAX"}) {
             assertThrows(IllegalArgumentException.class, () -> TokenType.valueOf(name));
         }
