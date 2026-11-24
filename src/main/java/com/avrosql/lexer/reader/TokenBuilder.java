@@ -1,5 +1,6 @@
 package com.avrosql.lexer.reader;
 
+import com.avrosql.exception.ErrorCode;
 import com.avrosql.lexer.Cursor;
 import com.avrosql.lexer.exception.LexicalException;
 import com.avrosql.lexer.exception.LexicalRuntimeException;
@@ -64,8 +65,8 @@ public final class TokenBuilder {
         return new LexicalRuntimeException(new LexicalException(character, line, column));
     }
 
-    public LexicalRuntimeException error(String message, char character) {
-        return new LexicalRuntimeException(new LexicalException(message, character, line, column));
+    public LexicalRuntimeException error(ErrorCode code, String message, char character) {
+        return new LexicalRuntimeException(new LexicalException(code, message, character, line, column));
     }
 
     public LexicalRuntimeException errorHere(char character) {

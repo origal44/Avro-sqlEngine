@@ -1,5 +1,6 @@
 package com.avrosql.parser;
 
+import com.avrosql.exception.ErrorCode;
 import com.avrosql.lexer.Lexer;
 import com.avrosql.lexer.exception.LexicalException;
 import com.avrosql.lexer.token.TokenType;
@@ -36,6 +37,7 @@ class ParseSelectTest {
     private static SyntaxException assertSyntaxError(String source, TokenType expected, String found,
                                                      int line, int column) {
         SyntaxException e = assertThrows(SyntaxException.class, () -> parse(source));
+        assertEquals(ErrorCode.UNEXPECTED_TOKEN, e.code());
         assertEquals(expected, e.expected());
         assertEquals(line, e.line());
         assertEquals(column, e.column());

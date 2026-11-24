@@ -2,10 +2,9 @@ package com.avrosql;
 
 import com.avrosql.cli.AstPrinter;
 import com.avrosql.cli.Terminal;
+import com.avrosql.exception.QueryException;
 import com.avrosql.lexer.Lexer;
-import com.avrosql.lexer.exception.LexicalException;
 import com.avrosql.parser.Parser;
-import com.avrosql.parser.exception.SyntaxException;
 
 public final class ParserDemo {
 
@@ -40,9 +39,7 @@ public final class ParserDemo {
     static String describe(String sql) {
         try {
             return AstPrinter.print(new Parser(new Lexer(sql).tokenize()).parse());
-        } catch (LexicalException e) {
-            return pointAt(sql, e.column(), e.getMessage());
-        } catch (SyntaxException e) {
+        } catch (QueryException e) {
             return pointAt(sql, e.column(), e.getMessage());
         }
     }

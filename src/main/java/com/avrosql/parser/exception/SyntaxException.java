@@ -1,9 +1,11 @@
 package com.avrosql.parser.exception;
 
+import com.avrosql.exception.ErrorCode;
+import com.avrosql.exception.QueryException;
 import com.avrosql.lexer.token.Token;
 import com.avrosql.lexer.token.TokenType;
 
-public final class SyntaxException extends Exception {
+public final class SyntaxException extends QueryException {
 
     private static final String UNEXPECTED_TOKEN = "Expected %s but found %s";
     private static final String AT_POSITION = "%s at line %d, column %d";
@@ -12,16 +14,16 @@ public final class SyntaxException extends Exception {
     private final Token found;
 
     public SyntaxException(TokenType expected, Token found) {
-        this(UNEXPECTED_TOKEN.formatted(expected, describe(found)), expected, found);
+        this(ErrorCode.UNEXPECTED_TOKEN, UNEXPECTED_TOKEN.formatted(expected, describe(found)), expected, found);
     }
 
     // For errors that aren't about one expected token. expected() is null for these.
-    public SyntaxException(String problem, Token found) {
-        this(problem, null, found);
+    public SyntaxException(ErrorCode code, String problem, Token found) {
+        this(code, problem, null, found);
     }
 
-    private SyntaxException(String problem, TokenType expected, Token found) {
-        super(AT_POSITION.formatted(problem, found.line(), found.column()));
+    private SyntaxException(ErrorCode code, String problem, TokenType expected, Token found) {
+        super(code, AT_POSITION.formatted(problem, found.line(), found.column()), found.line(), found.column());
         this.expected = expected;
         this.found = found;
     }
@@ -39,13 +41,5 @@ public final class SyntaxException extends Exception {
 
     public Token found() {
         return found;
-    }
-
-    public int line() {
-        return found.line();
-    }
-
-    public int column() {
-        return found.column();
     }
 }

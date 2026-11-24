@@ -1,5 +1,6 @@
 package com.avrosql.parser;
 
+import com.avrosql.exception.ErrorCode;
 import com.avrosql.lexer.token.Token;
 import com.avrosql.lexer.token.TokenType;
 import com.avrosql.parser.ast.Aggregate;
@@ -147,12 +148,12 @@ public final class Parser {
     private long wholeNumber() {
         Token token = expect(TokenType.NUMBER);
         if (token.text().indexOf('.') >= 0) {
-            throw error(EXPECTED_INTEGER.formatted(SyntaxException.describe(token)), token);
+            throw error(ErrorCode.EXPECTED_INTEGER, EXPECTED_INTEGER.formatted(SyntaxException.describe(token)), token);
         }
         try {
             return Long.parseLong(token.text());
         } catch (NumberFormatException e) {
-            throw error(NUMBER_TOO_LARGE.formatted(token.text()), token);
+            throw error(ErrorCode.NUMBER_TOO_LARGE, NUMBER_TOO_LARGE.formatted(token.text()), token);
         }
     }
 
@@ -193,7 +194,8 @@ public final class Parser {
             };
             // a < b < c would compare a boolean with c
             if (infixPower(op.type()) == COMPARISON && infixPower(peek().type()) == COMPARISON) {
-                throw error(CHAINED_COMPARISON.formatted(SyntaxException.describe(peek())), peek());
+                throw error(ErrorCode.CHAINED_COMPARISON,
+                        CHAINED_COMPARISON.formatted(SyntaxException.describe(peek())), peek());
             }
         }
         return left;
@@ -241,7 +243,7 @@ public final class Parser {
         if (match(TokenType.BETWEEN)) {
             return new Unary(TokenType.NOT, parseBetween(value, next), at(not));
         }
-        throw error(EXPECTED_AFTER_NOT.formatted(SyntaxException.describe(next)), next);
+        throw error(ErrorCode.EXPECTED_AFTER_NOT, EXPECTED_AFTER_NOT.formatted(SyntaxException.describe(next)), next);
     }
 
     private Expr parsePrefix() {
@@ -253,7 +255,9 @@ public final class Parser {
             case TRUE -> new Literal(true, at(token));
             case FALSE -> new Literal(false, at(token));
             // a name followed by '(' is a function call, otherwise a column
-            case IDENTIFIER -> match(TokenType.LEFT_PAREN) ? parseAggregate(token) : new ColumnRef(token.text(), at(token));
+            case IDENTIFIER -> match(TokenType.LEFT_PAREN)
+                    ? parseAggregate(token)
+                    : new ColumnRef(token.text(), at(token));
             case MINUS -> new Unary(TokenType.MINUS, parseExpression(UNARY_MINUS), at(token));
             case NOT -> new Unary(TokenType.NOT, parseExpression(NEGATION), at(token));
             case LEFT_PAREN -> {
@@ -261,7 +265,8 @@ public final class Parser {
                 expect(TokenType.RIGHT_PAREN);
                 yield inner;
             }
-            default -> throw error(EXPECTED_EXPRESSION.formatted(SyntaxException.describe(token)), token);
+            default -> throw error(ErrorCode.EXPECTED_EXPRESSION,
+                    EXPECTED_EXPRESSION.formatted(SyntaxException.describe(token)), token);
         };
     }
 
@@ -282,7 +287,7 @@ public final class Parser {
         try {
             return Aggregate.Function.valueOf(name.text().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw error(UNKNOWN_FUNCTION.formatted(name.text()), name);
+            throw error(ErrorCode.UNKNOWN_FUNCTION, UNKNOWN_FUNCTION.formatted(name.text()), name);
         }
     }
 
@@ -303,14 +308,14 @@ public final class Parser {
         if (text.indexOf('.') >= 0) {
             double value = Double.parseDouble(text);
             if (Double.isInfinite(value)) {
-                throw error(NUMBER_TOO_LARGE.formatted(text), token);
+                throw error(ErrorCode.NUMBER_TOO_LARGE, NUMBER_TOO_LARGE.formatted(text), token);
             }
             return new Literal(value, at(token));
         }
         try {
             return new Literal(Long.parseLong(text), at(token));
         } catch (NumberFormatException e) {
-            throw error(NUMBER_TOO_LARGE.formatted(text), token);
+            throw error(ErrorCode.NUMBER_TOO_LARGE, NUMBER_TOO_LARGE.formatted(text), token);
         }
     }
 
@@ -324,8 +329,8 @@ public final class Parser {
         return new Position(token.line(), token.column());
     }
 
-    private static SyntaxRuntimeException error(String problem, Token token) {
-        return new SyntaxRuntimeException(new SyntaxException(problem, token));
+    private static SyntaxRuntimeException error(ErrorCode code, String problem, Token token) {
+        return new SyntaxRuntimeException(new SyntaxException(code, problem, token));
     }
 
     Token peek() {
