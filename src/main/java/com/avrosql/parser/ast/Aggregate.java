@@ -15,9 +15,4 @@ public record Aggregate(Function function, Optional<Expr> argument) implements E
             throw new IllegalArgumentException("only COUNT can take *");
         }
     }
-
-    @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitAggregate(this);
-    }
 }

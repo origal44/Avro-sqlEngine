@@ -8,9 +8,4 @@ public record IsNull(Expr operand) implements Expr {
     public IsNull {
         Objects.requireNonNull(operand, "operand");
     }
-
-    @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitIsNull(this);
-    }
 }

@@ -5,7 +5,6 @@ import com.avrosql.parser.ast.Between;
 import com.avrosql.parser.ast.Binary;
 import com.avrosql.parser.ast.ColumnRef;
 import com.avrosql.parser.ast.Expr;
-import com.avrosql.parser.ast.ExprVisitor;
 import com.avrosql.parser.ast.In;
 import com.avrosql.parser.ast.IsNull;
 import com.avrosql.parser.ast.Literal;
@@ -15,7 +14,7 @@ import com.avrosql.parser.ast.SelectStatement;
 import com.avrosql.parser.ast.Unary;
 
 // Prints the tree with one node per line; children are indented under their parent.
-public final class AstPrinter implements ExprVisitor<Void> {
+public final class AstPrinter {
 
     private static final String INDENT = "  ";
 
@@ -78,8 +77,43 @@ public final class AstPrinter implements ExprVisitor<Void> {
         nested(() -> expr(condition));
     }
 
+    // no default branch: a new Expr type must fail to compile here until it is handled
     private void expr(Expr expression) {
-        expression.accept(this);
+        switch (expression) {
+            case ColumnRef c -> line("Column " + c.name());
+            case Literal l -> line("Literal " + literal(l.value()));
+            case Binary b -> node("Binary " + b.op(), b.left(), b.right());
+            case Unary u -> node("Unary " + u.op(), u.operand());
+            case IsNull n -> node("IsNull", n.operand());
+            case Between b -> node("Between", b.value(), b.low(), b.high());
+            case In in -> {
+                line("In");
+                nested(() -> {
+                    expr(in.value());
+                    in.values().forEach(this::expr);
+                });
+            }
+            case Aggregate a -> {
+                if (a.argument().isEmpty()) {
+                    line("Aggregate " + a.function() + "(*)");
+                } else {
+                    node("Aggregate " + a.function(), a.argument().get());
+                }
+            }
+        }
+    }
+
+    private void node(String label, Expr... children) {
+        line(label);
+        nested(() -> {
+            for (Expr child : children) {
+                expr(child);
+            }
+        });
+    }
+
+    private static String literal(Object value) {
+        return value instanceof String text ? "'" + text + "'" : String.valueOf(value).toUpperCase();
     }
 
     private void nested(Runnable children) {
@@ -90,74 +124,5 @@ public final class AstPrinter implements ExprVisitor<Void> {
 
     private void line(String text) {
         out.append(INDENT.repeat(depth)).append(text).append(System.lineSeparator());
-    }
-
-    @Override
-    public Void visitColumnRef(ColumnRef c) {
-        line("Column " + c.name());
-        return null;
-    }
-
-    @Override
-    public Void visitLiteral(Literal l) {
-        Object value = l.value();
-        line("Literal " + (value instanceof String text ? "'" + text + "'" : String.valueOf(value).toUpperCase()));
-        return null;
-    }
-
-    @Override
-    public Void visitBinary(Binary b) {
-        line("Binary " + b.op());
-        nested(() -> {
-            expr(b.left());
-            expr(b.right());
-        });
-        return null;
-    }
-
-    @Override
-    public Void visitUnary(Unary u) {
-        line("Unary " + u.op());
-        nested(() -> expr(u.operand()));
-        return null;
-    }
-
-    @Override
-    public Void visitIsNull(IsNull n) {
-        line("IsNull");
-        nested(() -> expr(n.operand()));
-        return null;
-    }
-
-    @Override
-    public Void visitBetween(Between b) {
-        line("Between");
-        nested(() -> {
-            expr(b.value());
-            expr(b.low());
-            expr(b.high());
-        });
-        return null;
-    }
-
-    @Override
-    public Void visitIn(In in) {
-        line("In");
-        nested(() -> {
-            expr(in.value());
-            in.values().forEach(this::expr);
-        });
-        return null;
-    }
-
-    @Override
-    public Void visitAggregate(Aggregate a) {
-        if (a.argument().isEmpty()) {
-            line("Aggregate " + a.function() + "(*)");
-            return null;
-        }
-        line("Aggregate " + a.function());
-        nested(() -> expr(a.argument().get()));
-        return null;
     }
 }

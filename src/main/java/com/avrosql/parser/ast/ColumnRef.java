@@ -10,9 +10,4 @@ public record ColumnRef(String name) implements Expr {
             throw new IllegalArgumentException("column name must not be blank");
         }
     }
-
-    @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitColumnRef(this);
-    }
 }

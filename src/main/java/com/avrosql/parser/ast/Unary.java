@@ -10,9 +10,4 @@ public record Unary(TokenType op, Expr operand) implements Expr {
         Objects.requireNonNull(op, "op");
         Objects.requireNonNull(operand, "operand");
     }
-
-    @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitUnary(this);
-    }
 }

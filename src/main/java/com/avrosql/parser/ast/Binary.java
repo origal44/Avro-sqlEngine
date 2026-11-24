@@ -11,9 +11,4 @@ public record Binary(Expr left, TokenType op, Expr right) implements Expr {
         Objects.requireNonNull(op, "op");
         Objects.requireNonNull(right, "right");
     }
-
-    @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitBinary(this);
-    }
 }

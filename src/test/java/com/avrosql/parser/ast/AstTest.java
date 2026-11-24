@@ -11,88 +11,58 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AstTest {
 
-    private static final ExprVisitor<String> DESCRIBE = new ExprVisitor<>() {
-        @Override
-        public String visitColumnRef(ColumnRef c) {
-            return "column " + c.name();
-        }
-
-        @Override
-        public String visitLiteral(Literal l) {
-            return "literal " + l.value();
-        }
-
-        @Override
-        public String visitBinary(Binary b) {
-            return "(" + b.left().accept(this) + " " + b.op() + " " + b.right().accept(this) + ")";
-        }
-
-        @Override
-        public String visitUnary(Unary u) {
-            return "(" + u.op() + " " + u.operand().accept(this) + ")";
-        }
-
-        @Override
-        public String visitIsNull(IsNull n) {
-            return "(" + n.operand().accept(this) + " IS NULL)";
-        }
-
-        @Override
-        public String visitBetween(Between b) {
-            return "(" + b.value().accept(this) + " BETWEEN " + b.low().accept(this) + " AND " + b.high().accept(this) + ")";
-        }
-
-        @Override
-        public String visitIn(In in) {
-            List<String> values = in.values().stream().map(v -> v.accept(this)).toList();
-            return "(" + in.value().accept(this) + " IN " + values + ")";
-        }
-
-        @Override
-        public String visitAggregate(Aggregate a) {
-            return a.function() + "(" + a.argument().map(arg -> arg.accept(this)).orElse("*") + ")";
-        }
-    };
+    private static String describe(Expr expr) {
+        return switch (expr) {
+            case ColumnRef c -> "column " + c.name();
+            case Literal l -> "literal " + l.value();
+            case Binary b -> "(" + describe(b.left()) + " " + b.op() + " " + describe(b.right()) + ")";
+            case Unary u -> "(" + u.op() + " " + describe(u.operand()) + ")";
+            case IsNull n -> "(" + describe(n.operand()) + " IS NULL)";
+            case Between b -> "(" + describe(b.value()) + " BETWEEN " + describe(b.low()) + " AND " + describe(b.high()) + ")";
+            case In in -> "(" + describe(in.value()) + " IN " + in.values().stream().map(AstTest::describe).toList() + ")";
+            case Aggregate a -> a.function() + "(" + a.argument().map(AstTest::describe).orElse("*") + ")";
+        };
+    }
 
     @Test
-    void visitorDispatchesOnRuntimeType() {
+    void switchPicksCaseByRuntimeType() {
         Expr column = new ColumnRef("age");
         Expr literal = new Literal(30L);
 
-        assertEquals("column age", column.accept(DESCRIBE));
-        assertEquals("literal 30", literal.accept(DESCRIBE));
+        assertEquals("column age", describe(column));
+        assertEquals("literal 30", describe(literal));
     }
 
     @Test
-    void visitorWalksIntoBinaryChildren() {
+    void switchWalksIntoBinaryChildren() {
         Expr sum = new Binary(new ColumnRef("age"), TokenType.PLUS, new Literal(1L));
-        assertEquals("(column age PLUS literal 1)", sum.accept(DESCRIBE));
+        assertEquals("(column age PLUS literal 1)", describe(sum));
     }
 
     @Test
-    void visitorWalksIntoUnaryOperand() {
+    void switchWalksIntoUnaryOperand() {
         Expr negated = new Unary(TokenType.NOT, new ColumnRef("active"));
-        assertEquals("(NOT column active)", negated.accept(DESCRIBE));
+        assertEquals("(NOT column active)", describe(negated));
     }
 
     @Test
-    void visitorWalksIntoIsNullOperand() {
+    void switchWalksIntoIsNullOperand() {
         Expr check = new IsNull(new ColumnRef("email"));
-        assertEquals("(column email IS NULL)", check.accept(DESCRIBE));
+        assertEquals("(column email IS NULL)", describe(check));
         assertThrows(NullPointerException.class, () -> new IsNull(null));
     }
 
     @Test
-    void visitorWalksIntoBetweenParts() {
+    void switchWalksIntoBetweenParts() {
         Expr range = new Between(new ColumnRef("age"), new Literal(18L), new Literal(30L));
-        assertEquals("(column age BETWEEN literal 18 AND literal 30)", range.accept(DESCRIBE));
+        assertEquals("(column age BETWEEN literal 18 AND literal 30)", describe(range));
         assertThrows(NullPointerException.class, () -> new Between(null, new Literal(1L), new Literal(2L)));
     }
 
     @Test
-    void visitorWalksIntoInValues() {
+    void switchWalksIntoInValues() {
         Expr in = new In(new ColumnRef("id"), List.of(new Literal(1L), new Literal(2L)));
-        assertEquals("(column id IN [literal 1, literal 2])", in.accept(DESCRIBE));
+        assertEquals("(column id IN [literal 1, literal 2])", describe(in));
     }
 
     @Test
@@ -106,10 +76,10 @@ class AstTest {
     }
 
     @Test
-    void visitorWalksIntoAggregateArgument() {
-        assertEquals("COUNT(*)", new Aggregate(Aggregate.Function.COUNT, Optional.empty()).accept(DESCRIBE));
+    void switchWalksIntoAggregateArgument() {
+        assertEquals("COUNT(*)", describe(new Aggregate(Aggregate.Function.COUNT, Optional.empty())));
         assertEquals("SUM(column price)",
-                new Aggregate(Aggregate.Function.SUM, Optional.of(new ColumnRef("price"))).accept(DESCRIBE));
+                describe(new Aggregate(Aggregate.Function.SUM, Optional.of(new ColumnRef("price")))));
     }
 
     @Test

@@ -8,9 +8,4 @@ public record Literal(Object value) implements Expr {
             throw new IllegalArgumentException("unsupported literal type: " + value.getClass().getSimpleName());
         }
     }
-
-    @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitLiteral(this);
-    }
 }

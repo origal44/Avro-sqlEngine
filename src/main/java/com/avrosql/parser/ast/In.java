@@ -13,9 +13,4 @@ public record In(Expr value, List<Expr> values) implements Expr {
             throw new IllegalArgumentException("IN list must not be empty");
         }
     }
-
-    @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitIn(this);
-    }
 }

@@ -9,9 +9,4 @@ public record Between(Expr value, Expr low, Expr high) implements Expr {
         Objects.requireNonNull(low, "low");
         Objects.requireNonNull(high, "high");
     }
-
-    @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitBetween(this);
-    }
 }
