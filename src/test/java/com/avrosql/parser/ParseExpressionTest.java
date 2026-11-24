@@ -584,4 +584,19 @@ class ParseExpressionTest {
         assertError("COUNT(*, x)", "Expected RIGHT_PAREN but found ',' (COMMA) at line 1, column 8");
         assertError("COUNT(x, y)", "Expected RIGHT_PAREN but found ',' (COMMA) at line 1, column 8");
     }
+
+    @Test
+    void nullTrueAndFalseAreLiterals() throws Exception {
+        assertEquals(new Literal(null), parse("NULL"));
+        assertEquals(new Literal(true), parse("TRUE"));
+        assertEquals(new Literal(false), parse("false"));
+    }
+
+    @Test
+    void keywordLiteralsWorkInsideExpressions() throws Exception {
+        assertEquals(bin(col("age"), GREATER, new Literal(null)), parse("age > NULL"));
+        assertEquals(bin(col("active"), EQUAL, new Literal(true)), parse("active = TRUE"));
+        assertEquals(un(NOT, new Literal(false)), parse("NOT FALSE"));
+        assertEquals(in(col("a"), new Literal(null), num(1)), parse("a IN (NULL, 1)"));
+    }
 }

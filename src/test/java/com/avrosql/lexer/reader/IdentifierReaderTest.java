@@ -48,7 +48,7 @@ class IdentifierReaderTest {
 
     @ParameterizedTest
     @EnumSource(value = TokenType.class, names = {
-            "SELECT", "FROM", "WHERE", "AND", "OR", "NOT", "IS", "NULL", "BETWEEN", "IN", "LIKE",
+            "SELECT", "FROM", "WHERE", "AND", "OR", "NOT", "IS", "NULL", "TRUE", "FALSE", "BETWEEN", "IN", "LIKE",
             "AS", "DISTINCT", "ORDER", "BY", "ASC", "DESC", "LIMIT", "OFFSET", "GROUP", "HAVING"})
     void everyKeywordIsRecognizedInAnyCase(TokenType keyword) {
         String upper = keyword.name();

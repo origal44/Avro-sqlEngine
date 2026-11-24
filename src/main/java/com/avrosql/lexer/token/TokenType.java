@@ -7,7 +7,8 @@ public enum TokenType {
     // Keywords, spelled like the constant name (case-insensitive)
     SELECT(Category.KEYWORD), FROM(Category.KEYWORD), WHERE(Category.KEYWORD),
     AND(Category.KEYWORD), OR(Category.KEYWORD), NOT(Category.KEYWORD),
-    IS(Category.KEYWORD), NULL(Category.KEYWORD), BETWEEN(Category.KEYWORD),
+    IS(Category.KEYWORD), NULL(Category.KEYWORD), TRUE(Category.KEYWORD), FALSE(Category.KEYWORD),
+    BETWEEN(Category.KEYWORD),
     IN(Category.KEYWORD), LIKE(Category.KEYWORD),
     AS(Category.KEYWORD), DISTINCT(Category.KEYWORD),
     ORDER(Category.KEYWORD), BY(Category.KEYWORD), ASC(Category.KEYWORD), DESC(Category.KEYWORD),

@@ -92,4 +92,11 @@ class ParsePositionTest {
         assertAt(1, 5, sum);
         assertAt(1, 9, sum.argument().orElseThrow());
     }
+
+    @Test
+    void keywordLiteralsPointAtThemselves() throws LexicalException {
+        Binary b = (Binary) parse("age = NULL OR TRUE");
+        assertAt(1, 7, ((Binary) b.left()).right());
+        assertAt(1, 15, b.right());
+    }
 }

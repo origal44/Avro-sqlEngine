@@ -249,6 +249,9 @@ public final class Parser {
         return switch (token.type()) {
             case NUMBER -> numberLiteral(token);
             case STRING -> stringLiteral(token);
+            case NULL -> new Literal(null, at(token));
+            case TRUE -> new Literal(true, at(token));
+            case FALSE -> new Literal(false, at(token));
             // a name followed by '(' is a function call, otherwise a column
             case IDENTIFIER -> match(TokenType.LEFT_PAREN) ? parseAggregate(token) : new ColumnRef(token.text(), at(token));
             case MINUS -> new Unary(TokenType.MINUS, parseExpression(UNARY_MINUS), at(token));

@@ -129,7 +129,7 @@ class AstTest {
 
     @Test
     void literalRejectsOtherTypes() {
-        assertThrows(IllegalArgumentException.class, () -> new Literal(true));
+        assertThrows(IllegalArgumentException.class, () -> new Literal(1.5f));
         assertThrows(IllegalArgumentException.class, () -> new Literal(new Object()));
     }
 
@@ -267,5 +267,11 @@ class AstTest {
     void positionRejectsNullAndNegative() {
         assertThrows(NullPointerException.class, () -> new ColumnRef("age", null));
         assertThrows(IllegalArgumentException.class, () -> new Position(-1, 1));
+    }
+
+    @Test
+    void literalAcceptsBoolean() {
+        assertEquals(true, new Literal(true).value());
+        assertNotEquals(new Literal(true), new Literal(1L));
     }
 }
