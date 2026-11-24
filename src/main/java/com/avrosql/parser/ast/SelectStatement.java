@@ -24,9 +24,6 @@ public record SelectStatement(boolean distinct, boolean selectAll, List<SelectIt
         if (!selectAll && items.isEmpty()) {
             throw new IllegalArgumentException("select list must not be empty");
         }
-        if (having.isPresent() && groupBy.isEmpty()) {
-            throw new IllegalArgumentException("HAVING needs GROUP BY");
-        }
         if (offset.isPresent() && limit.isEmpty()) {
             throw new IllegalArgumentException("OFFSET needs LIMIT");
         }

@@ -69,8 +69,8 @@ public final class Parser {
         String table = expect(TokenType.IDENTIFIER).text();
         Optional<Expr> where = parseWhere();
         List<Expr> groupBy = parseGroupBy();
-        // HAVING is only looked for after a GROUP BY; otherwise it's left for expect(SEMICOLON) to reject
-        Optional<Expr> having = groupBy.isEmpty() ? Optional.empty() : parseHaving();
+        // HAVING without GROUP BY is allowed: the whole table is then one group
+        Optional<Expr> having = parseHaving();
         List<OrderItem> orderBy = parseOrderBy();
         Optional<Long> limit = parseLimit();
         Optional<Long> offset = limit.isEmpty() ? Optional.empty() : parseOffset();

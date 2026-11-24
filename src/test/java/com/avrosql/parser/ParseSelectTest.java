@@ -332,8 +332,10 @@ class ParseSelectTest {
     }
 
     @Test
-    void havingNeedsGroupBy() {
-        assertSyntaxError("SELECT COUNT(*) FROM users HAVING COUNT(*) > 5;", SEMICOLON, "'HAVING' (HAVING)", 1, 28);
+    void havingWithoutGroupByIsAllowed() throws Exception {
+        SelectStatement s = parse("SELECT COUNT(*) FROM users HAVING COUNT(*) > 5;");
+        assertTrue(s.groupBy().isEmpty());
+        assertTrue(s.having().isPresent());
     }
 
     @Test

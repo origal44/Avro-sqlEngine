@@ -208,9 +208,9 @@ class AstTest {
         assertNotEquals(a, a.withDistinct());
     }
     @Test
-    void havingNeedsGroupBy() {
+    void havingWithoutGroupByIsAllowed() {
         Expr condition = new Binary(new ColumnRef("a"), TokenType.GREATER, new Literal(1L));
-        assertThrows(IllegalArgumentException.class, () -> SelectStatement.all("t").withHaving(condition));
+        assertEquals(Optional.of(condition), SelectStatement.all("t").withHaving(condition).having());
         SelectStatement grouped = SelectStatement.all("t").withGroupBy(List.of(new ColumnRef("a"))).withHaving(condition);
         assertEquals(Optional.of(condition), grouped.having());
     }
