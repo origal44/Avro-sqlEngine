@@ -1,6 +1,5 @@
 package com.avrosql.cli;
 
-/** Reads SQL one line at a time and prints its tokens, until the user enters an empty line. */
 final class TokenizeScreen implements Screen {
 
     private static final String TITLE = "Tokenize SQL";

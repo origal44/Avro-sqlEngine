@@ -1,0 +1,350 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1793195307.3351986,
+    "seen": 1794311889.3419757,
+    "ast_hash": "495bef0cdb288c1505274a7f94c21d7f",
+    "semantic_hash": "495bef0cdb288c1505274a7f94c21d7f"
+  },
+  "pom.xml": {
+    "mtime": 1793178310.0559027,
+    "seen": 1794311889.3419886,
+    "ast_hash": "adb7a13d63a064ff31c193c7c257d614",
+    "semantic_hash": "adb7a13d63a064ff31c193c7c257d614"
+  },
+  "src/main/java/com/avrosql/LexerDemo.java": {
+    "mtime": 1793185460.0190444,
+    "seen": 1794311889.341995,
+    "ast_hash": "629a80b431f32a3d66733a03a3ad58e1",
+    "semantic_hash": "629a80b431f32a3d66733a03a3ad58e1"
+  },
+  "src/main/java/com/avrosql/ParserDemo.java": {
+    "mtime": 1793718190.9688957,
+    "seen": 1794311889.341999,
+    "ast_hash": "4077254d365f6c97891aea06e8b804cd",
+    "semantic_hash": "4077254d365f6c97891aea06e8b804cd"
+  },
+  "src/main/java/com/avrosql/cli/AstPrinter.java": {
+    "mtime": 1793718155.583403,
+    "seen": 1794311889.3420026,
+    "ast_hash": "b74dd209bf35d7fd9fb7f5f1f8cfeed8",
+    "semantic_hash": "b74dd209bf35d7fd9fb7f5f1f8cfeed8"
+  },
+  "src/main/java/com/avrosql/cli/HowToUseScreen.java": {
+    "mtime": 1793185460.0210438,
+    "seen": 1794311889.3420057,
+    "ast_hash": "f69502e9a9e74a5312f7521bb7ff208a",
+    "semantic_hash": "f69502e9a9e74a5312f7521bb7ff208a"
+  },
+  "src/main/java/com/avrosql/cli/MainMenu.java": {
+    "mtime": 1793185460.022045,
+    "seen": 1794311889.3420086,
+    "ast_hash": "2ca19f715bb561170eb4874991bd5d19",
+    "semantic_hash": "2ca19f715bb561170eb4874991bd5d19"
+  },
+  "src/main/java/com/avrosql/cli/Screen.java": {
+    "mtime": 1793185460.0230458,
+    "seen": 1794311889.342013,
+    "ast_hash": "ea4e939293815d07db9351eaefdfc378",
+    "semantic_hash": "ea4e939293815d07db9351eaefdfc378"
+  },
+  "src/main/java/com/avrosql/cli/Terminal.java": {
+    "mtime": 1793185460.3440795,
+    "seen": 1794311889.3420172,
+    "ast_hash": "7f6ddfed8b9a5c054ce5764c12ec1575",
+    "semantic_hash": "7f6ddfed8b9a5c054ce5764c12ec1575"
+  },
+  "src/main/java/com/avrosql/cli/TokenPrinter.java": {
+    "mtime": 1793185460.0270457,
+    "seen": 1794311889.34202,
+    "ast_hash": "1b85e75c634ae1114ab52b9c4c51bd52",
+    "semantic_hash": "1b85e75c634ae1114ab52b9c4c51bd52"
+  },
+  "src/main/java/com/avrosql/cli/TokenizeScreen.java": {
+    "mtime": 1793185460.0260456,
+    "seen": 1794311889.3420234,
+    "ast_hash": "cf803a0948ce8416fd42574790444cdc",
+    "semantic_hash": "cf803a0948ce8416fd42574790444cdc"
+  },
+  "src/main/java/com/avrosql/lexer/Chars.java": {
+    "mtime": 1793185460.0280464,
+    "seen": 1794311889.3420272,
+    "ast_hash": "862eeb9cd5c3f7d500e2a31ebfe79fab",
+    "semantic_hash": "862eeb9cd5c3f7d500e2a31ebfe79fab"
+  },
+  "src/main/java/com/avrosql/lexer/Cursor.java": {
+    "mtime": 1793185460.0290422,
+    "seen": 1794311889.3420308,
+    "ast_hash": "e0e30724c23603ab76a913c29f5f041b",
+    "semantic_hash": "e0e30724c23603ab76a913c29f5f041b"
+  },
+  "src/main/java/com/avrosql/lexer/Lexer.java": {
+    "mtime": 1793185460.101605,
+    "seen": 1794311889.342035,
+    "ast_hash": "7c8db4d58cfde621980fa4b38e9557bc",
+    "semantic_hash": "7c8db4d58cfde621980fa4b38e9557bc"
+  },
+  "src/main/java/com/avrosql/lexer/LexicalError.java": {
+    "mtime": 1793185460.1145883,
+    "seen": 1794311889.3420377,
+    "ast_hash": "97749598a1aa94bd5df725143136fe04",
+    "semantic_hash": "97749598a1aa94bd5df725143136fe04"
+  },
+  "src/main/java/com/avrosql/lexer/exception/LexicalException.java": {
+    "mtime": 1793185460.0436032,
+    "seen": 1794311889.3420405,
+    "ast_hash": "156462e2115e7388590ff0096e34906d",
+    "semantic_hash": "156462e2115e7388590ff0096e34906d"
+  },
+  "src/main/java/com/avrosql/lexer/exception/LexicalRuntimeException.java": {
+    "mtime": 1793185460.1313324,
+    "seen": 1794311889.3420434,
+    "ast_hash": "979086b56103a2690287c07342e53702",
+    "semantic_hash": "979086b56103a2690287c07342e53702"
+  },
+  "src/main/java/com/avrosql/lexer/reader/IdentifierReader.java": {
+    "mtime": 1793185460.2109227,
+    "seen": 1794311889.3420458,
+    "ast_hash": "c1c4f59f42d0aa5ce463100b21ba5163",
+    "semantic_hash": "c1c4f59f42d0aa5ce463100b21ba5163"
+  },
+  "src/main/java/com/avrosql/lexer/reader/NumberReader.java": {
+    "mtime": 1793185460.23092,
+    "seen": 1794311889.3420482,
+    "ast_hash": "6cd549dc9ad08a157b094050dc819476",
+    "semantic_hash": "6cd549dc9ad08a157b094050dc819476"
+  },
+  "src/main/java/com/avrosql/lexer/reader/OperatorReader.java": {
+    "mtime": 1793185460.2444746,
+    "seen": 1794311889.3420508,
+    "ast_hash": "fbeb29f946b167ca34ed5ccd59a05f27",
+    "semantic_hash": "fbeb29f946b167ca34ed5ccd59a05f27"
+  },
+  "src/main/java/com/avrosql/lexer/reader/StringReader.java": {
+    "mtime": 1793185460.0495832,
+    "seen": 1794311889.3420534,
+    "ast_hash": "1e4b40a7082757874f1a905c6b1d74cf",
+    "semantic_hash": "1e4b40a7082757874f1a905c6b1d74cf"
+  },
+  "src/main/java/com/avrosql/lexer/reader/TokenBuilder.java": {
+    "mtime": 1793185460.0511048,
+    "seen": 1794311889.342056,
+    "ast_hash": "69eb533e86b46dfb36cb5e05cebee5c2",
+    "semantic_hash": "69eb533e86b46dfb36cb5e05cebee5c2"
+  },
+  "src/main/java/com/avrosql/lexer/reader/TokenReader.java": {
+    "mtime": 1793185460.0515823,
+    "seen": 1794311889.3420596,
+    "ast_hash": "9a4e97007875ac3e2d1e4d016088becb",
+    "semantic_hash": "9a4e97007875ac3e2d1e4d016088becb"
+  },
+  "src/main/java/com/avrosql/lexer/token/Token.java": {
+    "mtime": 1793185460.0525835,
+    "seen": 1794311889.342062,
+    "ast_hash": "1ad6c562ffd464a4f36a11fc92574b44",
+    "semantic_hash": "1ad6c562ffd464a4f36a11fc92574b44"
+  },
+  "src/main/java/com/avrosql/lexer/token/TokenType.java": {
+    "mtime": 1793202690.3870645,
+    "seen": 1794311889.3420644,
+    "ast_hash": "26b5bef72c32676ab89949b97f194736",
+    "semantic_hash": "26b5bef72c32676ab89949b97f194736"
+  },
+  "src/main/java/com/avrosql/parser/Parser.java": {
+    "mtime": 1793718167.6195438,
+    "seen": 1794311889.342067,
+    "ast_hash": "488e5306a318bbc2a456c02e1d41d6f7",
+    "semantic_hash": "488e5306a318bbc2a456c02e1d41d6f7"
+  },
+  "src/main/java/com/avrosql/parser/ast/Aggregate.java": {
+    "mtime": 1793687449.801953,
+    "seen": 1794311889.3420699,
+    "ast_hash": "e6d166f741b54c186153d9392228be00",
+    "semantic_hash": "e6d166f741b54c186153d9392228be00"
+  },
+  "src/main/java/com/avrosql/parser/ast/Between.java": {
+    "mtime": 1793197647.5485873,
+    "seen": 1794311889.3420725,
+    "ast_hash": "d30bf6d7ed7b8a7631bddf775e2a58e5",
+    "semantic_hash": "d30bf6d7ed7b8a7631bddf775e2a58e5"
+  },
+  "src/main/java/com/avrosql/parser/ast/Binary.java": {
+    "mtime": 1793187304.874784,
+    "seen": 1794311889.342075,
+    "ast_hash": "7ae97549674427ced46e63607305e884",
+    "semantic_hash": "7ae97549674427ced46e63607305e884"
+  },
+  "src/main/java/com/avrosql/parser/ast/ColumnRef.java": {
+    "mtime": 1793185460.0346537,
+    "seen": 1794311889.3420777,
+    "ast_hash": "d605c0e4448eb5bb9450c35f39d7a344",
+    "semantic_hash": "d605c0e4448eb5bb9450c35f39d7a344"
+  },
+  "src/main/java/com/avrosql/parser/ast/Expr.java": {
+    "mtime": 1793539409.207397,
+    "seen": 1794311889.34208,
+    "ast_hash": "4d658c23f640afb10a58a758102e34ca",
+    "semantic_hash": "4d658c23f640afb10a58a758102e34ca"
+  },
+  "src/main/java/com/avrosql/parser/ast/ExprVisitor.java": {
+    "mtime": 1793539409.2991135,
+    "seen": 1794311889.3420825,
+    "ast_hash": "e96e7a765feeb7d06689e1258d5568fb",
+    "semantic_hash": "e96e7a765feeb7d06689e1258d5568fb"
+  },
+  "src/main/java/com/avrosql/parser/ast/In.java": {
+    "mtime": 1793198332.533976,
+    "seen": 1794311889.3420851,
+    "ast_hash": "53ba7738c7776862bb07716a12f6a94d",
+    "semantic_hash": "53ba7738c7776862bb07716a12f6a94d"
+  },
+  "src/main/java/com/avrosql/parser/ast/IsNull.java": {
+    "mtime": 1793197268.564765,
+    "seen": 1794311889.3420875,
+    "ast_hash": "1ba187fb3a3e04b78cbe941f755858ad",
+    "semantic_hash": "1ba187fb3a3e04b78cbe941f755858ad"
+  },
+  "src/main/java/com/avrosql/parser/ast/Literal.java": {
+    "mtime": 1793185460.4616961,
+    "seen": 1794311889.3420901,
+    "ast_hash": "5d5d84bd1daf152351b220dd57cef9a0",
+    "semantic_hash": "5d5d84bd1daf152351b220dd57cef9a0"
+  },
+  "src/main/java/com/avrosql/parser/ast/OrderItem.java": {
+    "mtime": 1793718092.2204661,
+    "seen": 1794311889.3420928,
+    "ast_hash": "a086148a5e75f3df34e99124b6952f00",
+    "semantic_hash": "a086148a5e75f3df34e99124b6952f00"
+  },
+  "src/main/java/com/avrosql/parser/ast/SelectItem.java": {
+    "mtime": 1793540218.5092263,
+    "seen": 1794311889.3420951,
+    "ast_hash": "b5fd16d1e15ea54aa71ff6b0a95eb5e5",
+    "semantic_hash": "b5fd16d1e15ea54aa71ff6b0a95eb5e5"
+  },
+  "src/main/java/com/avrosql/parser/ast/SelectStatement.java": {
+    "mtime": 1793718134.1357224,
+    "seen": 1794311889.3420978,
+    "ast_hash": "3be2a41ac74aeaa2805f660f4073c41a",
+    "semantic_hash": "3be2a41ac74aeaa2805f660f4073c41a"
+  },
+  "src/main/java/com/avrosql/parser/ast/Unary.java": {
+    "mtime": 1793193578.7994156,
+    "seen": 1794311889.3421,
+    "ast_hash": "c5b96a810201495cccba107f314f7baa",
+    "semantic_hash": "c5b96a810201495cccba107f314f7baa"
+  },
+  "src/main/java/com/avrosql/parser/exception/SyntaxException.java": {
+    "mtime": 1793187304.2004702,
+    "seen": 1794311889.3421028,
+    "ast_hash": "30e7fbeae79247ba62182e3377a32004",
+    "semantic_hash": "30e7fbeae79247ba62182e3377a32004"
+  },
+  "src/main/java/com/avrosql/parser/exception/SyntaxRuntimeException.java": {
+    "mtime": 1793185460.5022519,
+    "seen": 1794311889.3421052,
+    "ast_hash": "a1d75d3cb215129c0b9cddbe2a018894",
+    "semantic_hash": "a1d75d3cb215129c0b9cddbe2a018894"
+  },
+  "src/test/java/com/avrosql/ParserDemoTest.java": {
+    "mtime": 1793718155.5854023,
+    "seen": 1794311889.3421075,
+    "ast_hash": "d4d2398c4f4afc4f2d834a0a3698b62d",
+    "semantic_hash": "d4d2398c4f4afc4f2d834a0a3698b62d"
+  },
+  "src/test/java/com/avrosql/cli/MainMenuTest.java": {
+    "mtime": 1793185460.055581,
+    "seen": 1794311889.3421102,
+    "ast_hash": "aabd00cdd1c43e1cff3c7c6e06278776",
+    "semantic_hash": "aabd00cdd1c43e1cff3c7c6e06278776"
+  },
+  "src/test/java/com/avrosql/lexer/CursorTest.java": {
+    "mtime": 1793185460.0565813,
+    "seen": 1794311889.3421266,
+    "ast_hash": "a6547b2fdcacde5faa189ae60d045d38",
+    "semantic_hash": "a6547b2fdcacde5faa189ae60d045d38"
+  },
+  "src/test/java/com/avrosql/lexer/LexerClassifyTest.java": {
+    "mtime": 1793185460.0575826,
+    "seen": 1794311889.3421295,
+    "ast_hash": "711ca1e6e9d4600bfead66e808c3913f",
+    "semantic_hash": "711ca1e6e9d4600bfead66e808c3913f"
+  },
+  "src/test/java/com/avrosql/lexer/LexerIntegrationTest.java": {
+    "mtime": 1793185460.0596135,
+    "seen": 1794311889.3421319,
+    "ast_hash": "005c71558cfe48196bd549a1324b1a4d",
+    "semantic_hash": "005c71558cfe48196bd549a1324b1a4d"
+  },
+  "src/test/java/com/avrosql/lexer/LexerSkeletonTest.java": {
+    "mtime": 1793185460.060588,
+    "seen": 1794311889.3421345,
+    "ast_hash": "b8d0e66aa8a9be546b421170821f7964",
+    "semantic_hash": "b8d0e66aa8a9be546b421170821f7964"
+  },
+  "src/test/java/com/avrosql/lexer/LexicalRuntimeExceptionTest.java": {
+    "mtime": 1793185460.061583,
+    "seen": 1794311889.3421373,
+    "ast_hash": "a354ff7f76377bd5b81528ce1fc44de9",
+    "semantic_hash": "a354ff7f76377bd5b81528ce1fc44de9"
+  },
+  "src/test/java/com/avrosql/lexer/reader/IdentifierReaderTest.java": {
+    "mtime": 1793185460.0665896,
+    "seen": 1794311889.34214,
+    "ast_hash": "371dfb8479933c7830626182c3a1a61e",
+    "semantic_hash": "371dfb8479933c7830626182c3a1a61e"
+  },
+  "src/test/java/com/avrosql/lexer/reader/NumberReaderTest.java": {
+    "mtime": 1793185460.0675807,
+    "seen": 1794311889.3421426,
+    "ast_hash": "acdc86a4cacfbb6a5850763f7599dfb8",
+    "semantic_hash": "acdc86a4cacfbb6a5850763f7599dfb8"
+  },
+  "src/test/java/com/avrosql/lexer/reader/OperatorReaderTest.java": {
+    "mtime": 1793185460.068588,
+    "seen": 1794311889.342145,
+    "ast_hash": "f8eb71d2fba4b68dfc733aafb2619389",
+    "semantic_hash": "f8eb71d2fba4b68dfc733aafb2619389"
+  },
+  "src/test/java/com/avrosql/lexer/reader/StringReaderTest.java": {
+    "mtime": 1793185460.0695825,
+    "seen": 1794311889.3421478,
+    "ast_hash": "f83f14fe2b39bf7c5108262a1a2b8974",
+    "semantic_hash": "f83f14fe2b39bf7c5108262a1a2b8974"
+  },
+  "src/test/java/com/avrosql/lexer/token/TokenTest.java": {
+    "mtime": 1793185460.0705822,
+    "seen": 1794311889.3421504,
+    "ast_hash": "cc00d30f3065071df0763e535599b164",
+    "semantic_hash": "cc00d30f3065071df0763e535599b164"
+  },
+  "src/test/java/com/avrosql/parser/ParseExpressionTest.java": {
+    "mtime": 1793718167.6215525,
+    "seen": 1794311889.3421526,
+    "ast_hash": "04d160b5397e1b647e9434d635600dae",
+    "semantic_hash": "04d160b5397e1b647e9434d635600dae"
+  },
+  "src/test/java/com/avrosql/parser/ParseSelectTest.java": {
+    "mtime": 1793718134.1387234,
+    "seen": 1794311889.3421555,
+    "ast_hash": "e3ef4fa5113a766b87e41155cff9d1b1",
+    "semantic_hash": "e3ef4fa5113a766b87e41155cff9d1b1"
+  },
+  "src/test/java/com/avrosql/parser/ParserCursorTest.java": {
+    "mtime": 1793185460.0625856,
+    "seen": 1794311889.3421578,
+    "ast_hash": "6ec91cf1dd0a9e922123645ead0a78da",
+    "semantic_hash": "6ec91cf1dd0a9e922123645ead0a78da"
+  },
+  "src/test/java/com/avrosql/parser/ParserIntegrationTest.java": {
+    "mtime": 1793718179.6949298,
+    "seen": 1794311889.3421605,
+    "ast_hash": "7675d841dbd2a103ddff5beff5598c87",
+    "semantic_hash": "7675d841dbd2a103ddff5beff5598c87"
+  },
+  "src/test/java/com/avrosql/parser/ast/AstTest.java": {
+    "mtime": 1793718134.140723,
+    "seen": 1794311889.342163,
+    "ast_hash": "94ec2b1a9336bdc4e2e777c7e0923f43",
+    "semantic_hash": "94ec2b1a9336bdc4e2e777c7e0923f43"
+  }
+}

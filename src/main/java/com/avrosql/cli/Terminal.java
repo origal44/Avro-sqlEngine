@@ -4,10 +4,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-/**
- * The console the menu talks to. Taking the streams as parameters lets tests
- * drive the menu with prepared input instead of a real keyboard.
- */
 public final class Terminal {
 
     private static final String PRESS_ENTER = "Press Enter to return to the menu...";
@@ -20,7 +16,7 @@ public final class Terminal {
         this.out = out;
     }
 
-    /** Prints the prompt and reads one line; returns null when the input has ended. */
+    // null when the input has ended
     public String readLine(String prompt) {
         out.print(prompt);
         return in.hasNextLine() ? in.nextLine() : null;

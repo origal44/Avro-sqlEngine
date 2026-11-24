@@ -13,7 +13,6 @@ import java.util.List;
 import static com.avrosql.lexer.token.TokenType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-/** All readers working together on whole queries. */
 class LexerIntegrationTest {
 
     private static List<Token> lex(String source) throws LexicalException {
@@ -96,8 +95,6 @@ class LexerIntegrationTest {
                 t(EOF, "", 8, 19)), lex(sql));
     }
 
-    // --- ';' is an ordinary token, not a stop condition ---
-
     @Test
     void queryWithoutSemicolon() throws LexicalException {
         assertEquals(List.of(
@@ -132,8 +129,6 @@ class LexerIntegrationTest {
                 types("SELECT * FROM t; DROP users"));
     }
 
-    // --- No syntax knowledge in the Lexer ---
-
     @Test
     void betweenAndIsAnOrdinaryAnd() throws LexicalException {
         assertEquals(List.of(WHERE, IDENTIFIER, NOT, BETWEEN, NUMBER, AND, NUMBER, EOF),
@@ -164,8 +159,6 @@ class LexerIntegrationTest {
         assertEquals(List.of(FROM, SELECT, WHERE, EOF), types("FROM SELECT WHERE"));
     }
 
-    // --- Whitespace and positions ---
-
     @Test
     void windowsLineEndingsAndTabs() throws LexicalException {
         assertEquals(List.of(
@@ -184,8 +177,6 @@ class LexerIntegrationTest {
         assertEquals(EOF, types.get(types.size() - 1));
         assertEquals(1, types.stream().filter(type -> type == EOF).count());
     }
-
-    // --- Errors inside a full query ---
 
     @Test
     void unknownCharacterInQueryReportsItsPosition() {

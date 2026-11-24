@@ -1,12 +1,8 @@
 package com.avrosql.lexer.reader;
 
+import com.avrosql.exception.ErrorCode;
 import com.avrosql.lexer.token.TokenType;
 
-/**
- * Reads single-quoted string literals. Inside a string nothing is classified:
- * only a closing quote ends it, and '' stands for one quote character.
- * The token text is the raw source, quotes and escapes included (e.g. 'it''s').
- */
 public final class StringReader extends TokenReader {
 
     private static final char QUOTE = '\'';
@@ -23,7 +19,7 @@ public final class StringReader extends TokenReader {
 
         while (true) {
             if (token.isAtEnd()) {
-                throw token.error(UNTERMINATED.formatted(token.line(), token.column()), QUOTE);
+                throw token.error(ErrorCode.UNTERMINATED_STRING, UNTERMINATED.formatted(token.line(), token.column()), QUOTE);
             }
             if (token.take() == QUOTE) {
                 if (token.peek() != QUOTE) {

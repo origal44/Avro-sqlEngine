@@ -27,8 +27,6 @@ class StringReaderTest {
         return new Token(type, text, 1, column);
     }
 
-    // --- The reader on its own ---
-
     @ParameterizedTest
     @ValueSource(strings = {"'abc'", "''", "'it''s'", "''''", "'a b  c'"})
     void readsWholeStringAsRawText(String text) {
@@ -45,8 +43,6 @@ class StringReaderTest {
         assertEquals(token(STRING, "'abc'", 1), reader.read(cursor));
         assertEquals(')', cursor.peek());
     }
-
-    // --- Through the Lexer ---
 
     @Test
     void semicolonInsideStringDoesNotStopReading() throws LexicalException {

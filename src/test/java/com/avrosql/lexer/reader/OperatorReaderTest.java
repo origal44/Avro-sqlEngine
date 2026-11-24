@@ -27,8 +27,6 @@ class OperatorReaderTest {
         return new Token(type, text, 1, column);
     }
 
-    // --- The reader on its own ---
-
     @ParameterizedTest
     @CsvSource(delimiter = ' ', value = {
             "= EQUAL", "< LESS", "> GREATER",
@@ -66,8 +64,6 @@ class OperatorReaderTest {
         assertEquals('5', cursor.peek());
     }
 
-    // --- Through the Lexer ---
-
     @Test
     void lessThenMinusAreTwoTokens() throws LexicalException {
         assertEquals(List.of(token(LESS, "<", 1), token(MINUS, "-", 2), token(EOF, "", 3)), lex("<-"));
@@ -87,7 +83,6 @@ class OperatorReaderTest {
 
     @Test
     void doubleSpacesInTheMiddleAreSkipped() throws LexicalException {
-        // Required by Step 2: doubled whitespace between tokens is skipped and positions stay correct.
         assertEquals(List.of(
                 token(LEFT_PAREN, "(", 1),
                 token(STAR, "*", 4),

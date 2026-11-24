@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MainMenuTest {
 
-    /** Runs the menu with the given lines as keyboard input and returns everything it printed. */
     private static String run(String... lines) {
         String input = lines.length == 0 ? "" : String.join("\n", lines) + "\n";
         ByteArrayOutputStream out = new ByteArrayOutputStream();

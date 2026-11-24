@@ -1,6 +1,5 @@
 package com.avrosql.cli;
 
-/** Explains to a new user what the lexer does, how to use the demo, and how to read its output. */
 final class HowToUseScreen implements Screen {
 
     private static final String TITLE = "How to use";
