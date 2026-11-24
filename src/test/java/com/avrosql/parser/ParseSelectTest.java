@@ -15,6 +15,7 @@ import com.avrosql.parser.ast.OrderItem;
 import com.avrosql.parser.ast.SelectItem;
 import com.avrosql.parser.ast.SelectStatement;
 import com.avrosql.parser.ast.Unary;
+import com.avrosql.parser.ast.Unpositioned;
 import com.avrosql.parser.exception.SyntaxException;
 
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParseSelectTest {
 
     private static SelectStatement parse(String source) throws LexicalException, SyntaxException {
-        return new Parser(new Lexer(source).tokenize()).parse();
+        return Unpositioned.of(new Parser(new Lexer(source).tokenize()).parse());
     }
 
     private static SyntaxException assertSyntaxError(String source, TokenType expected, String found,

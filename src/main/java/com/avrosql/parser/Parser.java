@@ -11,6 +11,7 @@ import com.avrosql.parser.ast.In;
 import com.avrosql.parser.ast.IsNull;
 import com.avrosql.parser.ast.Literal;
 import com.avrosql.parser.ast.OrderItem;
+import com.avrosql.parser.ast.Position;
 import com.avrosql.parser.ast.SelectItem;
 import com.avrosql.parser.ast.SelectStatement;
 import com.avrosql.parser.ast.Unary;
@@ -184,11 +185,11 @@ public final class Parser {
         while (infixPower(peek().type()) > minPower) {
             Token op = advance();
             left = switch (op.type()) {
-                case IS -> parseIsNull(left);
-                case BETWEEN -> parseBetween(left);
-                case IN -> parseIn(left);
-                case NOT -> parseInfixNot(left);
-                default -> new Binary(left, op.type(), parseExpression(infixPower(op.type())));
+                case IS -> parseIsNull(left, op);
+                case BETWEEN -> parseBetween(left, op);
+                case IN -> parseIn(left, op);
+                case NOT -> parseInfixNot(left, op);
+                default -> new Binary(left, op.type(), parseExpression(infixPower(op.type())), at(op));
             };
             // a < b < c would compare a boolean with c
             if (infixPower(op.type()) == COMPARISON && infixPower(peek().type()) == COMPARISON) {
@@ -199,22 +200,24 @@ public final class Parser {
     }
 
     // postfix: no right side to parse, only the fixed words [NOT] NULL
-    private Expr parseIsNull(Expr operand) {
+    // the NOT of IS NOT NULL is the position of the Unary, IS the position of the IsNull
+    private Expr parseIsNull(Expr operand, Token is) {
+        Token not = peek();
         boolean negated = match(TokenType.NOT);
         expect(TokenType.NULL);
-        Expr isNull = new IsNull(operand);
-        return negated ? new Unary(TokenType.NOT, isNull) : isNull;
+        Expr isNull = new IsNull(operand, at(is));
+        return negated ? new Unary(TokenType.NOT, isNull, at(not)) : isNull;
     }
 
     // bounds stop below AND, so the first AND is the separator and a later one stays logical
-    private Expr parseBetween(Expr value) {
+    private Expr parseBetween(Expr value, Token between) {
         Expr low = parseExpression(COMPARISON);
         expect(TokenType.AND);
         Expr high = parseExpression(COMPARISON);
-        return new Between(value, low, high);
+        return new Between(value, low, high, at(between));
     }
 
-    private Expr parseIn(Expr value) {
+    private Expr parseIn(Expr value, Token in) {
         expect(TokenType.LEFT_PAREN);
         List<Expr> values = new ArrayList<>();
         values.add(parseExpression(NONE));
@@ -222,20 +225,21 @@ public final class Parser {
             values.add(parseExpression(NONE));
         }
         expect(TokenType.RIGHT_PAREN);
-        return new In(value, values);
+        return new In(value, values, at(in));
     }
 
     // NOT after a left side, as in a NOT IN (...); a leading NOT is handled in parsePrefix
-    private Expr parseInfixNot(Expr value) {
+    private Expr parseInfixNot(Expr value, Token not) {
         Token next = peek();
         if (match(TokenType.IN)) {
-            return new Unary(TokenType.NOT, parseIn(value));
+            return new Unary(TokenType.NOT, parseIn(value, next), at(not));
         }
         if (match(TokenType.LIKE)) {
-            return new Unary(TokenType.NOT, new Binary(value, TokenType.LIKE, parseExpression(COMPARISON)));
+            Expr like = new Binary(value, TokenType.LIKE, parseExpression(COMPARISON), at(next));
+            return new Unary(TokenType.NOT, like, at(not));
         }
         if (match(TokenType.BETWEEN)) {
-            return new Unary(TokenType.NOT, parseBetween(value));
+            return new Unary(TokenType.NOT, parseBetween(value, next), at(not));
         }
         throw error(EXPECTED_AFTER_NOT.formatted(SyntaxException.describe(next)), next);
     }
@@ -246,9 +250,9 @@ public final class Parser {
             case NUMBER -> numberLiteral(token);
             case STRING -> stringLiteral(token);
             // a name followed by '(' is a function call, otherwise a column
-            case IDENTIFIER -> match(TokenType.LEFT_PAREN) ? parseAggregate(token) : new ColumnRef(token.text());
-            case MINUS -> new Unary(TokenType.MINUS, parseExpression(UNARY_MINUS));
-            case NOT -> new Unary(TokenType.NOT, parseExpression(NEGATION));
+            case IDENTIFIER -> match(TokenType.LEFT_PAREN) ? parseAggregate(token) : new ColumnRef(token.text(), at(token));
+            case MINUS -> new Unary(TokenType.MINUS, parseExpression(UNARY_MINUS), at(token));
+            case NOT -> new Unary(TokenType.NOT, parseExpression(NEGATION), at(token));
             case LEFT_PAREN -> {
                 Expr inner = parseExpression(NONE);
                 expect(TokenType.RIGHT_PAREN);
@@ -268,7 +272,7 @@ public final class Parser {
             argument = Optional.of(parseExpression(NONE));
         }
         expect(TokenType.RIGHT_PAREN);
-        return new Aggregate(function, argument);
+        return new Aggregate(function, argument, at(name));
     }
 
     private static Aggregate.Function aggregateFunction(Token name) {
@@ -298,10 +302,10 @@ public final class Parser {
             if (Double.isInfinite(value)) {
                 throw error(NUMBER_TOO_LARGE.formatted(text), token);
             }
-            return new Literal(value);
+            return new Literal(value, at(token));
         }
         try {
-            return new Literal(Long.parseLong(text));
+            return new Literal(Long.parseLong(text), at(token));
         } catch (NumberFormatException e) {
             throw error(NUMBER_TOO_LARGE.formatted(text), token);
         }
@@ -310,7 +314,11 @@ public final class Parser {
     // 'it''s' -> it's
     private static Literal stringLiteral(Token token) {
         String text = token.text();
-        return new Literal(text.substring(1, text.length() - 1).replace("''", "'"));
+        return new Literal(text.substring(1, text.length() - 1).replace("''", "'"), at(token));
+    }
+
+    private static Position at(Token token) {
+        return new Position(token.line(), token.column());
     }
 
     private static SyntaxRuntimeException error(String problem, Token token) {

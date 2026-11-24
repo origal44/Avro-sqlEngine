@@ -3,9 +3,14 @@ package com.avrosql.parser.ast;
 import java.util.Objects;
 
 // IS NOT NULL is Unary(NOT, IsNull(...)): same meaning, since IS NULL is never NULL itself.
-public record IsNull(Expr operand) implements Expr {
+public record IsNull(Expr operand, Position position) implements Expr {
 
     public IsNull {
+        Objects.requireNonNull(position, "position");
         Objects.requireNonNull(operand, "operand");
+    }
+
+    public IsNull(Expr operand) {
+        this(operand, Position.UNKNOWN);
     }
 }

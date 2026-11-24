@@ -251,4 +251,21 @@ class AstTest {
         assertThrows(IllegalArgumentException.class, () -> SelectStatement.all("t").withLimit(-1));
         assertThrows(IllegalArgumentException.class, () -> SelectStatement.all("t").withLimit(1).withOffset(-1));
     }
+
+    @Test
+    void nodesBuiltInCodeHaveUnknownPosition() {
+        assertEquals(Position.UNKNOWN, new ColumnRef("age").position());
+        assertEquals(new Position(2, 7), new ColumnRef("age", new Position(2, 7)).position());
+    }
+
+    @Test
+    void positionIsPartOfEquality() {
+        assertNotEquals(new ColumnRef("age", new Position(1, 1)), new ColumnRef("age", new Position(1, 9)));
+    }
+
+    @Test
+    void positionRejectsNullAndNegative() {
+        assertThrows(NullPointerException.class, () -> new ColumnRef("age", null));
+        assertThrows(IllegalArgumentException.class, () -> new Position(-1, 1));
+    }
 }

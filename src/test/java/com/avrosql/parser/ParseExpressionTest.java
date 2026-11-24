@@ -12,6 +12,7 @@ import com.avrosql.parser.ast.In;
 import com.avrosql.parser.ast.IsNull;
 import com.avrosql.parser.ast.Literal;
 import com.avrosql.parser.ast.Unary;
+import com.avrosql.parser.ast.Unpositioned;
 import com.avrosql.parser.exception.SyntaxException;
 import com.avrosql.parser.exception.SyntaxRuntimeException;
 
@@ -30,7 +31,7 @@ class ParseExpressionTest {
         try {
             Expr expr = parser.parseExpression();
             parser.expect(EOF);
-            return expr;
+            return Unpositioned.of(expr);
         } catch (SyntaxRuntimeException e) {
             throw e.getCause();
         }

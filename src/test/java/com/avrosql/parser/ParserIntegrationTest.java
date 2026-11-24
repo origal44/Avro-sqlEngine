@@ -15,6 +15,7 @@ import com.avrosql.parser.ast.OrderItem;
 import com.avrosql.parser.ast.SelectItem;
 import com.avrosql.parser.ast.SelectStatement;
 import com.avrosql.parser.ast.Unary;
+import com.avrosql.parser.ast.Unpositioned;
 import com.avrosql.parser.exception.SyntaxException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,7 +36,7 @@ class ParserIntegrationTest {
     private static final Expr COUNT_STAR = new Aggregate(Aggregate.Function.COUNT, Optional.empty());
 
     private static SelectStatement parse(String sql) throws LexicalException, SyntaxException {
-        return new Parser(new Lexer(sql).tokenize()).parse();
+        return Unpositioned.of(new Parser(new Lexer(sql).tokenize()).parse());
     }
 
     private static Expr col(String name) {
